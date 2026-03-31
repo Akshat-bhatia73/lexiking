@@ -5,8 +5,9 @@ import {
 } from "@clerk/tanstack-react-start"
 import { useAuth, useUser } from "@clerk/tanstack-react-start"
 import { useQuery } from "convex/react"
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { api } from "../../convex/_generated/api"
+import { Button } from "@/components/ui/button"
 
 export const Route = createFileRoute("/")({
   component: Home,
@@ -27,7 +28,7 @@ function Home() {
     <div className="min-h-svh p-6">
       <div className="mx-auto max-w-4xl">
         <header className="mb-8 flex items-center justify-between">
-          <h1 className="text-3xl font-bold">LexiKing</h1>
+          <h1 className="text-3xl font-bold">Dashboard</h1>
           <div className="flex items-center gap-4">
             {!isSignedIn ? (
               <>
@@ -94,6 +95,11 @@ function Dashboard() {
               : "No words due for review today. Great job!"}
           </p>
         )}
+        {totalCount === 0 && (
+          <Link to="/add">
+            <Button className="mt-4">Add Your First Word</Button>
+          </Link>
+        )}
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
@@ -118,24 +124,28 @@ function Dashboard() {
           <h3 className="mb-4 text-lg font-semibold">Recent Words</h3>
           <div className="space-y-2">
             {allWords.slice(0, 5).map((word) => (
-              <div
-                key={word._id}
-                className="flex items-center justify-between rounded-md border p-3"
-              >
-                <div>
-                  <p className="font-medium">{word.word}</p>
-                  <p className="line-clamp-1 text-sm text-muted-foreground">
-                    {word.definition}
-                  </p>
+              <Link key={word._id} to="/word/$id" params={{ id: word._id }}>
+                <div className="flex cursor-pointer items-center justify-between rounded-md border p-3 transition-colors hover:bg-accent">
+                  <div>
+                    <p className="font-medium">{word.word}</p>
+                    <p className="line-clamp-1 text-sm text-muted-foreground">
+                      {word.definition}
+                    </p>
+                  </div>
+                  {word.part_of_speech && (
+                    <span className="rounded bg-muted px-2 py-1 text-xs">
+                      {word.part_of_speech}
+                    </span>
+                  )}
                 </div>
-                {word.part_of_speech && (
-                  <span className="rounded bg-muted px-2 py-1 text-xs">
-                    {word.part_of_speech}
-                  </span>
-                )}
-              </div>
+              </Link>
             ))}
           </div>
+          <Link to="/library">
+            <Button variant="outline" className="mt-4 w-full">
+              View All Words
+            </Button>
+          </Link>
         </div>
       )}
     </div>

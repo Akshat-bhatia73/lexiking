@@ -9,7 +9,7 @@ import { ConvexReactClient } from "convex/react"
 import { ConvexProviderWithClerk } from "convex/react-clerk"
 import { useAuth } from "@clerk/tanstack-react-start"
 import { ConvexQueryClient } from "@convex-dev/react-query"
-import { useRouteContext } from "@tanstack/react-router"
+import { useRouteContext, Link } from "@tanstack/react-router"
 
 import appCss from "../styles.css?url"
 
@@ -84,7 +84,28 @@ function Shell({ children }: { children: React.ReactNode }) {
             <HeadContent />
           </head>
           <body>
-            {children}
+            <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+              <div className="mx-auto flex h-14 max-w-4xl items-center justify-between px-4">
+                <Link to="/" className="text-xl font-bold">
+                  LexiKing
+                </Link>
+                <div className="flex items-center gap-4">
+                  <Link
+                    to="/library"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Library
+                  </Link>
+                  <Link
+                    to="/add"
+                    className="rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground hover:bg-primary/90"
+                  >
+                    Add Word
+                  </Link>
+                </div>
+              </div>
+            </nav>
+            <main>{children}</main>
             <Scripts />
           </body>
         </html>

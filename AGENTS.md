@@ -4,9 +4,55 @@ Guidelines for AI coding agents working in this repository.
 
 ## Project Overview
 
-LexiMind is an AI-powered vocabulary tracker with spaced repetition. The entire backend lives in Convex — a reactive database where frontend queries auto-update when data changes. TanStack Start handles routing and type-safe data fetching.
+LexiKing is an AI-powered vocabulary tracker with spaced repetition. The entire backend lives in Convex — a reactive database where frontend queries auto-update when data changes. TanStack Start handles routing and type-safe data fetching.
 
-**Tech Stack:** TanStack Start · TypeScript · Convex · Gemini Flash
+**Tech Stack:** TanStack Start · TypeScript · Convex · Gemini Flash · Clerk (Auth)
+
+## Authentication & User Model
+
+**Auth Provider:** Clerk with anonymous session support for guests
+
+### User Identifiers
+
+| Mode      | user_id Source              | Behavior                         |
+| --------- | --------------------------- | -------------------------------- |
+| Guest     | Clerk anonymous session ID  | Data stored locally, upgradeable |
+| Logged-in | Clerk authenticated user ID | Data synced across devices       |
+
+### Data Isolation
+
+- All tables include `user_id` field
+- All queries filter by `user_id` (server-side security)
+- Guest-to-user migration handled automatically by Clerk
+
+### Word Uniqueness
+
+- Each `word` is unique per `user_id`
+- Index: `by_user_word` enables duplicate check on save
+
+### Auth Helper Function
+
+```typescript
+// In convex/auth.ts
+import type { QueryCtx } from "./_generated/server"
+
+export async function getAuthenticatedUserId(ctx: QueryCtx): Promise<string> {
+  const identity = await ctx.auth.getUserIdentity()
+  if (!identity) {
+    throw new Error("Not authenticated")
+  }
+  return identity.subject // Clerk user ID
+}
+```
+
+### Environment Variables
+
+```bash
+# Clerk (get from https://dashboard.clerk.com/last-active?path=api-keys)
+VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+CLERK_JWT_ISSUER_DOMAIN=https://xxx.clerk.accounts.dev
+```
 
 ## Build/Lint/Test Commands
 
@@ -53,13 +99,58 @@ Convex has no REST endpoints. Write functions in `convex/` folder:
 ```
 convex/
 ├── schema.ts           # Database schema (tables, indexes)
+├── auth.config.ts      # Clerk authentication configuration
+├── auth.ts             # Auth helper functions
 ├── words.ts            # Queries/mutations for words
+├── reviews.ts          # Queries/mutations for review history
 ├── ai.ts               # Actions for Gemini integration
 ├── analytics.ts        # Queries for stats/charts
 ├── lib/
 │   └── sm2.ts           # SM-2 algorithm implementation
 └── _generated/          # Auto-generated types (never edit)
 ```
+
+## Data Model
+
+### Words Table
+
+Core entity for vocabulary items. Includes SM-2 spaced repetition fields.
+
+**Fields:**
+
+- `word`, `definition`, `part_of_speech`, `pronunciation`
+- `examples[]`, `synonyms[]`, `antonyms[]`, `etymology`, `notes`
+- `ease_factor`, `interval`, `repetitions`, `next_review_at` (SM-2)
+- `user_id`, `source`, `is_archived`, `created_at`, `updated_at`
+
+**Indexes:**
+
+- `by_user` - List all words for a user
+- `by_user_word` - Enforce uniqueness (user + word)
+- `by_user_next_review` - Query words due for review
+
+### Reviews Table
+
+Immutable event log of every review session.
+
+**Purpose:**
+
+- Calculate retention rates over time
+- Identify weakest words (low success rate)
+- Generate learning progress charts
+- Debug interval calculations
+- Enable future ML-based algorithms (FSRS)
+
+**Fields:**
+
+- `user_id`, `word_id`, `rating`, `reviewed_at`
+- `ease_factor_before/after`, `interval_before/after`
+
+**Indexes:**
+
+- `by_user` - All reviews for a user
+- `by_user_word` - Review history for specific word
+- `by_user_reviewed_at` - Time-based analytics
 
 ## Code Style Guidelines
 
@@ -137,7 +228,7 @@ Rating map: `again=0`, `hard=2`, `good=4`, `easy=5`
 2. **AI Enrichment:** ai.enrichWord action, auto-fill on word entry
 3. **Paste-to-Extract:** ai.extractFromText action, bulk save extracted words
 4. **Quiz Engine:** SM-2, dueToday query, quiz UI with rating buttons
-5. **Analytics:** Summary queries, weekly chart, weakest words
+5. **Analytics:** Summary queries, retention rate, weekly chart, weakest words
 6. **Polish:** Word detail page, mobile-responsive, empty states
 
 <!-- intent-skills:start -->

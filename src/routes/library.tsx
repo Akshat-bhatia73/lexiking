@@ -2,21 +2,21 @@ import { useAuth } from "@clerk/tanstack-react-start"
 import { useQuery } from "convex/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
-import { api } from "../../convex/_generated/api"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Card, CardContent } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
+  Archive,
   ArrowLeft,
-  Plus,
   LayoutGrid,
   List,
+  Plus,
   Search,
-  Archive,
 } from "lucide-react"
+import { api } from "../../convex/_generated/api"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const Route = createFileRoute("/library")({
   component: Library,
@@ -98,7 +98,10 @@ function Library() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Tabs value={filter} onValueChange={(v) => setFilter(v as any)}>
+            <Tabs
+              value={filter}
+              onValueChange={(v) => setFilter(v as typeof filter)}
+            >
               <TabsList>
                 <TabsTrigger value="all">All</TabsTrigger>
                 <TabsTrigger value="due">Due Today</TabsTrigger>

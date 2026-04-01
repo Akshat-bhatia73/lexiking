@@ -1,15 +1,15 @@
-import { ClerkProvider } from "@clerk/tanstack-react-start"
-import { QueryClient } from "@tanstack/react-query"
+import { ClerkProvider, useAuth } from "@clerk/tanstack-react-start"
 import {
   HeadContent,
   Scripts,
   createRootRouteWithContext,
+  Link,
+  useRouteContext,
 } from "@tanstack/react-router"
+import type { QueryClient } from "@tanstack/react-query"
 import { ConvexReactClient } from "convex/react"
 import { ConvexProviderWithClerk } from "convex/react-clerk"
-import { useAuth } from "@clerk/tanstack-react-start"
 import { ConvexQueryClient } from "@convex-dev/react-query"
-import { useRouteContext, Link } from "@tanstack/react-router"
 
 import appCss from "../styles.css?url"
 
@@ -95,6 +95,18 @@ function Shell({ children }: { children: React.ReactNode }) {
                     className="text-sm text-muted-foreground hover:text-foreground"
                   >
                     Library
+                  </Link>
+                  <Link
+                    to="/quiz"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Quiz
+                  </Link>
+                  <Link
+                    to="/analytics"
+                    className="text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Analytics
                   </Link>
                   <Link
                     to="/add"

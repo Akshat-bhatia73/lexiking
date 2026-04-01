@@ -1,12 +1,19 @@
 import { useAuth } from "@clerk/tanstack-react-start"
-import { useQuery, useMutation } from "convex/react"
+import { useMutation, useQuery } from "convex/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { Archive, ArrowLeft, Calendar, Trash2, TrendingUp } from "lucide-react"
 import { api } from "../../convex/_generated/api"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
-import { ArrowLeft, Archive, Trash2 } from "lucide-react"
+
+const RATING_LABELS: Record<number, { label: string; color: string }> = {
+  0: { label: "Again", color: "bg-red-100 text-red-800" },
+  2: { label: "Hard", color: "bg-orange-100 text-orange-800" },
+  4: { label: "Good", color: "bg-blue-100 text-blue-800" },
+  5: { label: "Easy", color: "bg-green-100 text-green-800" },
+}
 
 export const Route = createFileRoute("/word/$id")({
   component: WordDetail,
@@ -17,6 +24,7 @@ function WordDetail() {
   const { isSignedIn, isLoaded } = useAuth()
   const navigate = useNavigate()
   const word = useQuery(api.words.get, { id: id as any })
+  const reviews = useQuery(api.reviews.byWord, { wordId: id as any })
   const archiveWord = useMutation(api.words.archive)
   const deleteWord = useMutation(api.words.remove)
 
@@ -77,6 +85,16 @@ function WordDetail() {
       year: "numeric",
       month: "short",
       day: "numeric",
+    })
+  }
+
+  const formatDateTime = (timestamp: number) => {
+    return new Date(timestamp).toLocaleString("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
     })
   }
 
@@ -191,6 +209,77 @@ function WordDetail() {
                 {word.source || "manual"}
               </div>
             </div>
+
+            <div className="border-t pt-4">
+              <h3 className="mb-3 font-semibold">Learning Progress</h3>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="rounded-lg border p-3">
+                  <p className="text-sm text-muted-foreground">Reviews</p>
+                  <p className="text-xl font-bold">{word.repetitions}</p>
+                </div>
+                <div className="rounded-lg border p-3">
+                  <p className="text-sm text-muted-foreground">Interval</p>
+                  <p className="text-xl font-bold">{word.interval} days</p>
+                </div>
+                <div className="rounded-lg border p-3">
+                  <p className="text-sm text-muted-foreground">Ease Factor</p>
+                  <p className="text-xl font-bold">
+                    {word.ease_factor.toFixed(2)}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {reviews && reviews.length > 0 && (
+              <div className="border-t pt-4">
+                <div className="mb-3 flex items-center justify-between">
+                  <h3 className="font-semibold">Review History</h3>
+                  <span className="text-sm text-muted-foreground">
+                    {reviews.length} reviews
+                  </span>
+                </div>
+                <div className="max-h-64 space-y-2 overflow-y-auto">
+                  {reviews.slice(0, 10).map((review) => {
+                    const rating = RATING_LABELS[review.rating]
+                    return (
+                      <div
+                        key={review._id}
+                        className="flex items-center justify-between rounded-lg border p-3"
+                      >
+                        <div className="flex items-center gap-3">
+                          <span
+                            className={`rounded px-2 py-1 text-xs font-medium ${rating.color}`}
+                          >
+                            {rating.label}
+                          </span>
+                          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                            <TrendingUp className="h-3 w-3" />
+                            <span>
+                              EF: {review.ease_factor_before.toFixed(2)} →{" "}
+                              {review.ease_factor_after.toFixed(2)}
+                            </span>
+                            <span className="text-muted-foreground/50">|</span>
+                            <span>
+                              {review.interval_before}d →{" "}
+                              {review.interval_after}d
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <Calendar className="h-3 w-3" />
+                          {formatDateTime(review.reviewed_at)}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+                {reviews.length > 10 && (
+                  <p className="mt-2 text-center text-sm text-muted-foreground">
+                    Showing last 10 of {reviews.length} reviews
+                  </p>
+                )}
+              </div>
+            )}
 
             <div className="flex gap-2 border-t pt-4">
               <Button variant="outline" onClick={handleArchive}>

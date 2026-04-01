@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as ai from "../ai.js";
 import type * as auth from "../auth.js";
 import type * as lib_sm2 from "../lib/sm2.js";
 import type * as reviews from "../reviews.js";
@@ -20,6 +21,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  ai: typeof ai;
   auth: typeof auth;
   "lib/sm2": typeof lib_sm2;
   reviews: typeof reviews;

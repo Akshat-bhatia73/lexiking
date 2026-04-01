@@ -14,14 +14,13 @@ export const list = query({
   handler: async (ctx, args) => {
     const userId = await getAuthenticatedUserId(ctx)
 
-    let query = ctx.db
+    const results = await ctx.db
       .query("words")
       .withIndex("by_user", (q) => q.eq("user_id", userId))
-
-    const words = await query.collect()
+      .collect()
 
     // Filter by archived status (default: show non-archived)
-    let filtered = words.filter((w) =>
+    let filtered = results.filter((w) =>
       args.archived !== undefined
         ? w.is_archived === args.archived
         : !w.is_archived

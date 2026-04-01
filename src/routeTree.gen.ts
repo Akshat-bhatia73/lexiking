@@ -9,14 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as LibraryRouteImport } from './routes/library'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AddRouteImport } from './routes/add'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WordIdRouteImport } from './routes/word.$id'
 
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LibraryRoute = LibraryRouteImport.update({
   id: '/library',
   path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AddRoute = AddRouteImport.update({
@@ -38,44 +50,73 @@ const WordIdRoute = WordIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
+  '/analytics': typeof AnalyticsRoute
   '/library': typeof LibraryRoute
+  '/quiz': typeof QuizRoute
   '/word/$id': typeof WordIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
+  '/analytics': typeof AnalyticsRoute
   '/library': typeof LibraryRoute
+  '/quiz': typeof QuizRoute
   '/word/$id': typeof WordIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/add': typeof AddRoute
+  '/analytics': typeof AnalyticsRoute
   '/library': typeof LibraryRoute
+  '/quiz': typeof QuizRoute
   '/word/$id': typeof WordIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/add' | '/library' | '/word/$id'
+  fullPaths: '/' | '/add' | '/analytics' | '/library' | '/quiz' | '/word/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/add' | '/library' | '/word/$id'
-  id: '__root__' | '/' | '/add' | '/library' | '/word/$id'
+  to: '/' | '/add' | '/analytics' | '/library' | '/quiz' | '/word/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/add'
+    | '/analytics'
+    | '/library'
+    | '/quiz'
+    | '/word/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddRoute: typeof AddRoute
+  AnalyticsRoute: typeof AnalyticsRoute
   LibraryRoute: typeof LibraryRoute
+  QuizRoute: typeof QuizRoute
   WordIdRoute: typeof WordIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/library': {
       id: '/library'
       path: '/library'
       fullPath: '/library'
       preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/add': {
@@ -105,7 +146,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddRoute: AddRoute,
+  AnalyticsRoute: AnalyticsRoute,
   LibraryRoute: LibraryRoute,
+  QuizRoute: QuizRoute,
   WordIdRoute: WordIdRoute,
 }
 export const routeTree = rootRouteImport

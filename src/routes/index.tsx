@@ -2,8 +2,9 @@ import {
   SignInButton,
   SignUpButton,
   UserButton,
+  useAuth,
+  useUser,
 } from "@clerk/tanstack-react-start"
-import { useAuth, useUser } from "@clerk/tanstack-react-start"
 import { useQuery } from "convex/react"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { api } from "../../convex/_generated/api"
@@ -83,11 +84,16 @@ function Dashboard() {
           Welcome{user?.firstName ? `, ${user.firstName}` : ""}!
         </h2>
         {dueCount > 0 ? (
-          <p className="text-muted-foreground">
-            You have{" "}
-            <span className="font-semibold text-foreground">{dueCount}</span>{" "}
-            {dueCount === 1 ? "word" : "words"} due for review today.
-          </p>
+          <div className="space-y-4">
+            <p className="text-muted-foreground">
+              You have{" "}
+              <span className="font-semibold text-foreground">{dueCount}</span>{" "}
+              {dueCount === 1 ? "word" : "words"} due for review today.
+            </p>
+            <Link to="/quiz">
+              <Button>Start Quiz</Button>
+            </Link>
+          </div>
         ) : (
           <p className="text-muted-foreground">
             {totalCount === 0

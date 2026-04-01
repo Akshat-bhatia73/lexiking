@@ -16,6 +16,8 @@
     "@clerk/tanstack-react-start": "^1.0.7",
     "@convex-dev/react-query": "^0.1.0",
     "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/playfair": "^5.2.8",
+    "@fontsource-variable/source-sans-3": "^5.2.9",
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-devtools": "^0.7.0",
     "@tanstack/react-query": "^5.90.21",

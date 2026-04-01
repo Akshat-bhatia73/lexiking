@@ -8,6 +8,8 @@
         "@clerk/tanstack-react-start": "^1.0.7",
         "@convex-dev/react-query": "^0.1.0",
         "@fontsource-variable/inter": "^5.2.8",
+        "@fontsource-variable/playfair": "^5.2.8",
+        "@fontsource-variable/source-sans-3": "^5.2.9",
         "@tailwindcss/vite": "^4.1.18",
         "@tanstack/react-devtools": "^0.7.0",
         "@tanstack/react-query": "^5.90.21",
@@ -239,6 +241,10 @@
     "@floating-ui/utils": ["@floating-ui/utils@0.2.11", "", {}, "sha512-RiB/yIh78pcIxl6lLMG0CgBXAZ2Y0eVHqMPYugu+9U0AeT6YBeiJpf7lbdJNIugFP5SIjwNRgo4DhR1Qxi26Gg=="],
 
     "@fontsource-variable/inter": ["@fontsource-variable/inter@5.2.8", "", {}, "sha512-kOfP2D+ykbcX/P3IFnokOhVRNoTozo5/JxhAIVYLpea/UBmCQ/YWPBfWIDuBImXX/15KH+eKh4xpEUyS2sQQGQ=="],
+
+    "@fontsource-variable/playfair": ["@fontsource-variable/playfair@5.2.8", "", {}, "sha512-P7Wg/4vT1P4/GulzvNzK+ONpbnbOqx3sUpEoYTVcTOu2x/c40lOguH/QXS+4FrUAu4ouvZrkWiu3uRyX1GnB9g=="],
+
+    "@fontsource-variable/source-sans-3": ["@fontsource-variable/source-sans-3@5.2.9", "", {}, "sha512-K9fkQbb0BNnRmmaU+Gpr6U4IaYKpNzA8t07J6aam2i+6v84RT72MVpar8OBr3yYAEznj4riKivPQ2nAF2fPKsw=="],
 
     "@hono/node-server": ["@hono/node-server@1.19.11", "", { "peerDependencies": { "hono": "^4" } }, "sha512-dr8/3zEaB+p0D2n/IUrlPF1HZm586qgJNXK1a9fhg/PzdtkK7Ksd5l312tJX2yBuALqDYBlG20QEbayqPyxn+g=="],
 

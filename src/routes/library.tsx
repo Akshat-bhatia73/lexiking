@@ -2,21 +2,11 @@ import { useAuth } from "@clerk/tanstack-react-start"
 import { useQuery } from "convex/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
-import {
-  Archive,
-  ArrowLeft,
-  LayoutGrid,
-  List,
-  Plus,
-  Search,
-} from "lucide-react"
+import { Archive, LayoutGrid, List, Plus, Search } from "lucide-react"
 import { api } from "../../convex/_generated/api"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 export const Route = createFileRoute("/library")({
   component: Library,
@@ -37,18 +27,16 @@ function Library() {
 
   if (!isLoaded) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="h-8 w-8 animate-pulse bg-muted" />
       </div>
     )
   }
 
   if (!isSignedIn) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground">
-          Please sign in to view your library
-        </p>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
+        <p className="text-muted-foreground">Please sign in to view your library</p>
         <Button onClick={() => navigate({ to: "/" })}>Go Home</Button>
       </div>
     )
@@ -67,115 +55,143 @@ function Library() {
         )
 
   return (
-    <div className="min-h-svh p-6">
-      <div className="mx-auto max-w-4xl">
-        <div className="mb-6 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => navigate({ to: "/" })}
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          <Button onClick={() => navigate({ to: "/add" })} size="sm">
-            <Plus className="mr-2 h-4 w-4" />
-            Add Word
-          </Button>
+    <div className="mx-auto max-w-6xl px-6 py-12">
+      <div className="mb-8 flex items-start justify-between">
+        <div>
+          <h1 className="font-display text-3xl font-bold">Library</h1>
+          <p className="mt-1 text-muted-foreground">
+            {filteredWords?.length ?? 0} words in your collection
+          </p>
         </div>
-
-        <h1 className="mb-6 text-3xl font-bold">Library</h1>
-
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative max-w-md flex-1">
-            <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search words..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Tabs
-              value={filter}
-              onValueChange={(v) => setFilter(v as typeof filter)}
-            >
-              <TabsList>
-                <TabsTrigger value="all">All</TabsTrigger>
-                <TabsTrigger value="due">Due Today</TabsTrigger>
-                <TabsTrigger value="archived">
-                  <Archive className="mr-1 h-3 w-3" />
-                  Archived
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-
-            <div className="flex items-center rounded-md border">
-              <Button
-                variant={view === "list" ? "secondary" : "ghost"}
-                size="icon"
-                className="rounded-r-none"
-                onClick={() => setView("list")}
-              >
-                <List className="h-4 w-4" />
-              </Button>
-              <Button
-                variant={view === "grid" ? "secondary" : "ghost"}
-                size="icon"
-                className="rounded-l-none"
-                onClick={() => setView("grid")}
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {isLoading ? (
-          <div className="space-y-4">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <Card key={i}>
-                <CardContent className="p-4">
-                  <Skeleton className="mb-2 h-5 w-32" />
-                  <Skeleton className="h-4 w-full" />
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        ) : filteredWords && filteredWords.length > 0 ? (
-          view === "list" ? (
-            <ListView
-              words={filteredWords}
-              onSelect={(id) => navigate({ to: "/word/$id", params: { id } })}
-            />
-          ) : (
-            <GridView
-              words={filteredWords}
-              onSelect={(id) => navigate({ to: "/word/$id", params: { id } })}
-            />
-          )
-        ) : (
-          <div className="flex flex-col items-center justify-center py-12 text-center">
-            <p className="mb-4 text-muted-foreground">
-              {search
-                ? "No words found matching your search"
-                : filter === "archived"
-                  ? "No archived words"
-                  : filter === "due"
-                    ? "No words due for review today"
-                    : "No words in your library yet"}
-            </p>
-            {filter === "all" && !search && (
-              <Button onClick={() => navigate({ to: "/add" })}>
-                <Plus className="mr-2 h-4 w-4" />
-                Add Your First Word
-              </Button>
-            )}
-          </div>
-        )}
+        <Button onClick={() => navigate({ to: "/add" })}>
+          <Plus className="mr-2 h-4 w-4" />
+          Add Word
+        </Button>
       </div>
+
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative max-w-md flex-1">
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search your words..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="flex border border-border">
+            <button
+              onClick={() => setFilter("all")}
+              className={`px-3 py-1.5 text-sm transition-colors ${
+                filter === "all"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-secondary"
+              }`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => setFilter("due")}
+              className={`border-x border-border px-3 py-1.5 text-sm transition-colors ${
+                filter === "due"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-secondary"
+              }`}
+            >
+              Due
+            </button>
+            <button
+              onClick={() => setFilter("archived")}
+              className={`flex items-center gap-1 px-3 py-1.5 text-sm transition-colors ${
+                filter === "archived"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-secondary"
+              }`}
+            >
+              <Archive className="h-3 w-3" />
+              Archived
+            </button>
+          </div>
+
+          <div className="flex border border-border">
+            <button
+              onClick={() => setView("list")}
+              className={`px-2 py-1.5 transition-colors ${
+                view === "list"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-secondary"
+              }`}
+              title="List view"
+            >
+              <List className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => setView("grid")}
+              className={`border-l border-border px-2 py-1.5 transition-colors ${
+                view === "grid"
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-secondary"
+              }`}
+              title="Grid view"
+            >
+              <LayoutGrid className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <div className="space-y-4">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="border border-border bg-card p-4">
+              <Skeleton className="mb-2 h-5 w-32" />
+              <Skeleton className="h-4 w-full max-w-md" />
+            </div>
+          ))}
+        </div>
+      ) : filteredWords && filteredWords.length > 0 ? (
+        view === "list" ? (
+          <ListView
+            words={filteredWords}
+            onSelect={(id) => navigate({ to: "/word/$id", params: { id } })}
+          />
+        ) : (
+          <GridView
+            words={filteredWords}
+            onSelect={(id) => navigate({ to: "/word/$id", params: { id } })}
+          />
+        )
+      ) : (
+        <div className="flex flex-col items-center justify-center py-16 text-center">
+          <div className="mb-4 flex h-16 w-16 items-center justify-center border border-border bg-secondary">
+            <Search className="h-6 w-6 text-muted-foreground" />
+          </div>
+          <h3 className="font-semibold">
+            {search
+              ? "No words found"
+              : filter === "archived"
+                ? "No archived words"
+                : filter === "due"
+                  ? "No words due today"
+                  : "Your library is empty"}
+          </h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {search
+              ? "Try a different search term"
+              : filter === "all"
+                ? "Add your first word to get started"
+                : ""}
+          </p>
+          {filter === "all" && !search && (
+            <Button className="mt-6" onClick={() => navigate({ to: "/add" })}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add Your First Word
+            </Button>
+          )}
+        </div>
+      )}
     </div>
   )
 }
@@ -193,30 +209,42 @@ function ListView({
   onSelect: (id: string) => void
 }) {
   return (
-    <div className="space-y-2">
+    <div className="divide-y divide-border border border-border bg-card">
       {words.map((word) => (
-        <Card
+        <button
           key={word._id}
-          className="cursor-pointer transition-colors hover:bg-accent"
           onClick={() => onSelect(word._id)}
+          className="flex w-full items-center justify-between px-6 py-4 text-left transition-colors hover:bg-secondary/50"
         >
-          <CardContent className="flex items-center justify-between p-4">
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold capitalize">{word.word}</h3>
-                {word.part_of_speech && (
-                  <Badge variant="secondary" className="text-xs">
-                    {word.part_of_speech}
-                  </Badge>
-                )}
-              </div>
-              <p className="truncate text-sm text-muted-foreground">
-                {word.definition}
-              </p>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="font-display font-medium capitalize">
+                {word.word}
+              </span>
+              {word.part_of_speech && (
+                <span className="border border-border bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground">
+                  {word.part_of_speech}
+                </span>
+              )}
             </div>
-            <ArrowLeft className="h-4 w-4 rotate-180 text-muted-foreground" />
-          </CardContent>
-        </Card>
+            <p className="mt-1 truncate text-sm text-muted-foreground">
+              {word.definition}
+            </p>
+          </div>
+          <svg
+            className="h-4 w-4 flex-shrink-0 text-muted-foreground"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
       ))}
     </div>
   )
@@ -237,25 +265,25 @@ function GridView({
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {words.map((word) => (
-        <Card
+        <button
           key={word._id}
-          className="cursor-pointer transition-colors hover:bg-accent"
           onClick={() => onSelect(word._id)}
+          className="border border-border bg-card p-5 text-left transition-colors hover:bg-secondary/50"
         >
-          <CardContent className="p-4">
-            <div className="mb-2 flex items-center gap-2">
-              <h3 className="font-semibold capitalize">{word.word}</h3>
-              {word.part_of_speech && (
-                <Badge variant="secondary" className="text-xs">
-                  {word.part_of_speech}
-                </Badge>
-              )}
-            </div>
-            <p className="line-clamp-2 text-sm text-muted-foreground">
-              {word.definition}
-            </p>
-          </CardContent>
-        </Card>
+          <div className="mb-2 flex items-center gap-2">
+            <span className="font-display font-medium capitalize">
+              {word.word}
+            </span>
+            {word.part_of_speech && (
+              <span className="border border-border bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground">
+                {word.part_of_speech}
+              </span>
+            )}
+          </div>
+          <p className="line-clamp-2 text-sm text-muted-foreground">
+            {word.definition}
+          </p>
+        </button>
       ))}
     </div>
   )

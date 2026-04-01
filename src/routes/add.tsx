@@ -2,16 +2,13 @@ import { useAuth } from "@clerk/tanstack-react-start"
 import { useAction, useMutation } from "convex/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
-import { ArrowLeft, FileText, Loader2, Plus, X } from "lucide-react"
+import { ArrowLeft, FileText, Loader2, Plus, Sparkles, X } from "lucide-react"
 import { api } from "../../convex/_generated/api"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Textarea } from "@/components/ui/textarea"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export const Route = createFileRoute("/add")({
   component: AddWord,
@@ -59,15 +56,15 @@ function AddWord() {
 
   if (!isLoaded) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <p className="text-muted-foreground">Loading...</p>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="h-8 w-8 animate-pulse bg-muted" />
       </div>
     )
   }
 
   if (!isSignedIn) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
         <p className="text-muted-foreground">Please sign in to add words</p>
         <Button onClick={() => navigate({ to: "/" })}>Go Home</Button>
       </div>
@@ -225,429 +222,428 @@ function AddWord() {
   }
 
   return (
-    <div className="min-h-svh p-6">
-      <div className="mx-auto max-w-2xl">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate({ to: "/" })}
-          className="mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back
-        </Button>
+    <div className="mx-auto max-w-2xl px-6 py-12">
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate({ to: "/" })}
+        className="mb-6"
+      >
+        <ArrowLeft className="mr-2 h-4 w-4" />
+        Back
+      </Button>
 
-        <Tabs
-          value={mode}
-          onValueChange={(v) => setMode(v as "single" | "extract")}
-        >
-          <TabsList className="mb-6">
-            <TabsTrigger value="single">Single Word</TabsTrigger>
-            <TabsTrigger value="extract">
-              <FileText className="mr-2 h-4 w-4" />
-              Extract from Text
-            </TabsTrigger>
-          </TabsList>
+      <div className="mb-8">
+        <h1 className="font-display text-3xl font-bold">Add New Word</h1>
+        <p className="mt-1 text-muted-foreground">
+          Enter a word and let AI enrich it with definitions, examples, and more.
+        </p>
+      </div>
 
-          <TabsContent value="single">
-            <Card>
-              <CardHeader>
-                <CardTitle>Add New Word</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {!isEnriched ? (
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="word">Word</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          id="word"
-                          value={word}
-                          onChange={(e) => setWord(e.target.value)}
-                          placeholder="Enter a word to learn..."
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") handleEnrich()
-                          }}
-                        />
-                        <Button
-                          onClick={handleEnrich}
-                          disabled={!word.trim() || isEnriching}
-                        >
-                          {isEnriching ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            "Enrich"
-                          )}
-                        </Button>
-                      </div>
-                    </div>
-                    {error && (
-                      <p className="text-sm text-destructive">{error}</p>
+      <div className="mb-6 flex border border-border">
+        <button
+          onClick={() => setMode("single")}
+          className={`flex-1 px-4 py-2 text-sm transition-colors ${
+            mode === "single"
+              ? "bg-primary text-primary-foreground"
+              : "hover:bg-secondary"
+          }`}
+        >
+          Single Word
+        </button>
+        <button
+          onClick={() => setMode("extract")}
+          className={`flex-1 border-l border-border px-4 py-2 text-sm transition-colors ${
+            mode === "extract"
+              ? "bg-primary text-primary-foreground"
+              : "hover:bg-secondary"
+          }`}
+        >
+          <span className="flex items-center justify-center gap-2">
+            <FileText className="h-4 w-4" />
+            Extract from Text
+          </span>
+        </button>
+      </div>
+
+      {mode === "single" ? (
+        <div className="space-y-6">
+          {!isEnriched ? (
+            <div className="border border-border bg-card p-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="word">Word</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="word"
+                      value={word}
+                      onChange={(e) => setWord(e.target.value)}
+                      placeholder="Enter a word to learn..."
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleEnrich()
+                      }}
+                    />
+                    <Button
+                      onClick={handleEnrich}
+                      disabled={!word.trim() || isEnriching}
+                    >
+                      {isEnriching ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <>
+                          <Sparkles className="mr-2 h-4 w-4" />
+                          Enrich
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+                {error && <p className="text-sm text-red-600">{error}</p>}
+              </div>
+            </div>
+          ) : (
+            <>
+              {isEnriching && (
+                <div className="space-y-4">
+                  <Skeleton className="h-8 w-32" />
+                  <Skeleton className="h-20 w-full" />
+                  <Skeleton className="h-8 w-full" />
+                </div>
+              )}
+
+              {!isEnriching && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3">
+                    <h2 className="font-display text-2xl font-bold capitalize">
+                      {word}
+                    </h2>
+                    {partOfSpeech && (
+                      <span className="border border-border bg-secondary px-2 py-0.5 text-sm text-muted-foreground">
+                        {partOfSpeech}
+                      </span>
                     )}
                   </div>
-                ) : (
-                  <>
-                    {isEnriching && (
-                      <div className="space-y-4">
-                        <Skeleton className="h-8 w-32" />
-                        <Skeleton className="h-20 w-full" />
-                        <Skeleton className="h-8 w-full" />
-                        <Skeleton className="h-8 w-full" />
-                        <Skeleton className="h-8 w-full" />
+
+                  <div className="space-y-2">
+                    <Label htmlFor="definition">
+                      Definition<span className="text-red-600">*</span>
+                    </Label>
+                    <Textarea
+                      id="definition"
+                      value={definition}
+                      onChange={(e) => setDefinition(e.target.value)}
+                      placeholder="Enter the definition..."
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="partOfSpeech">Part of Speech</Label>
+                      <Input
+                        id="partOfSpeech"
+                        value={partOfSpeech}
+                        onChange={(e) => setPartOfSpeech(e.target.value)}
+                        placeholder="noun, verb, adjective..."
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="pronunciation">Pronunciation</Label>
+                      <Input
+                        id="pronunciation"
+                        value={pronunciation}
+                        onChange={(e) => setPronunciation(e.target.value)}
+                        placeholder="/ˈwɜːrd/"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label>Examples</Label>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handleAddExample}
+                      >
+                        <Plus className="mr-1 h-4 w-4" />
+                        Add
+                      </Button>
+                    </div>
+                    {examples.map((example, index) => (
+                      <div key={index} className="flex gap-2">
+                        <Input
+                          value={example}
+                          onChange={(e) =>
+                            handleExampleChange(index, e.target.value)
+                          }
+                          placeholder="Enter an example sentence..."
+                          className="flex-1"
+                        />
+                        {examples.length > 1 && (
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRemoveExample(index)}
+                          >
+                            <X className="h-4 w-4" />
+                          </Button>
+                        )}
                       </div>
-                    )}
+                    ))}
+                  </div>
 
-                    {!isEnriching && (
-                      <div className="space-y-6">
-                        <div className="flex items-center gap-3">
-                          <h2 className="text-2xl font-bold capitalize">
-                            {word}
-                          </h2>
-                          {partOfSpeech && (
-                            <Badge variant="secondary">{partOfSpeech}</Badge>
-                          )}
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="definition">
-                            Definition
-                            <span className="text-destructive">*</span>
-                          </Label>
-                          <Textarea
-                            id="definition"
-                            value={definition}
-                            onChange={(e) => setDefinition(e.target.value)}
-                            placeholder="Enter the definition..."
-                            rows={3}
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label>Synonyms</Label>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleAddSynonym}
+                        >
+                          <Plus className="mr-1 h-4 w-4" />
+                          Add
+                        </Button>
+                      </div>
+                      {synonyms.map((synonym, index) => (
+                        <div key={index} className="flex gap-2">
+                          <Input
+                            value={synonym}
+                            onChange={(e) =>
+                              handleSynonymChange(index, e.target.value)
+                            }
+                            placeholder="synonym"
+                            className="flex-1"
                           />
-                        </div>
-
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div className="space-y-2">
-                            <Label htmlFor="partOfSpeech">Part of Speech</Label>
-                            <Input
-                              id="partOfSpeech"
-                              value={partOfSpeech}
-                              onChange={(e) => setPartOfSpeech(e.target.value)}
-                              placeholder="noun, verb, adjective..."
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="pronunciation">Pronunciation</Label>
-                            <Input
-                              id="pronunciation"
-                              value={pronunciation}
-                              onChange={(e) => setPronunciation(e.target.value)}
-                              placeholder="/ˈwɜːrd/"
-                            />
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <Label>Examples</Label>
+                          {synonyms.length > 1 && (
                             <Button
                               type="button"
                               variant="ghost"
-                              size="sm"
-                              onClick={handleAddExample}
+                              size="icon"
+                              onClick={() => handleRemoveSynonym(index)}
                             >
-                              <Plus className="mr-1 h-4 w-4" />
-                              Add
+                              <X className="h-4 w-4" />
                             </Button>
-                          </div>
-                          {examples.map((example, index) => (
-                            <div key={index} className="flex gap-2">
-                              <Input
-                                value={example}
-                                onChange={(e) =>
-                                  handleExampleChange(index, e.target.value)
-                                }
-                                placeholder="Enter an example sentence..."
-                                className="flex-1"
-                              />
-                              {examples.length > 1 && (
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="icon"
-                                  onClick={() => handleRemoveExample(index)}
-                                >
-                                  <X className="h-4 w-4" />
-                                </Button>
-                              )}
-                            </div>
-                          ))}
-                        </div>
-
-                        <div className="grid gap-4 sm:grid-cols-2">
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <Label>Synonyms</Label>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleAddSynonym}
-                              >
-                                <Plus className="mr-1 h-4 w-4" />
-                                Add
-                              </Button>
-                            </div>
-                            {synonyms.map((synonym, index) => (
-                              <div key={index} className="flex gap-2">
-                                <Input
-                                  value={synonym}
-                                  onChange={(e) =>
-                                    handleSynonymChange(index, e.target.value)
-                                  }
-                                  placeholder="synonym"
-                                  className="flex-1"
-                                />
-                                {synonyms.length > 1 && (
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => handleRemoveSynonym(index)}
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between">
-                              <Label>Antonyms</Label>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={handleAddAntonym}
-                              >
-                                <Plus className="mr-1 h-4 w-4" />
-                                Add
-                              </Button>
-                            </div>
-                            {antonyms.map((antonym, index) => (
-                              <div key={index} className="flex gap-2">
-                                <Input
-                                  value={antonym}
-                                  onChange={(e) =>
-                                    handleAntonymChange(index, e.target.value)
-                                  }
-                                  placeholder="antonym"
-                                  className="flex-1"
-                                />
-                                {antonyms.length > 1 && (
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    onClick={() => handleRemoveAntonym(index)}
-                                  >
-                                    <X className="h-4 w-4" />
-                                  </Button>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="etymology">Etymology</Label>
-                          <Textarea
-                            id="etymology"
-                            value={etymology}
-                            onChange={(e) => setEtymology(e.target.value)}
-                            placeholder="Origin and history of the word..."
-                            rows={2}
-                          />
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="notes">Notes</Label>
-                          <Textarea
-                            id="notes"
-                            value={notes}
-                            onChange={(e) => setNotes(e.target.value)}
-                            placeholder="Personal notes or memory aids..."
-                            rows={2}
-                          />
-                        </div>
-
-                        <div className="flex gap-2 pt-4">
-                          <Button variant="outline" onClick={resetForm}>
-                            Reset
-                          </Button>
-                          <Button
-                            onClick={handleSave}
-                            disabled={
-                              !word.trim() || !definition.trim() || isSaving
-                            }
-                          >
-                            {isSaving ? (
-                              <>
-                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                                Saving...
-                              </>
-                            ) : (
-                              "Save Word"
-                            )}
-                          </Button>
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="extract">
-            <Card>
-              <CardHeader>
-                <CardTitle>Extract Words from Text</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="text">Paste your text here</Label>
-                  <Textarea
-                    id="text"
-                    value={text}
-                    onChange={(e) => setText(e.target.value)}
-                    placeholder="Paste an article, essay, or any text to extract vocabulary words from..."
-                    rows={8}
-                  />
-                </div>
-
-                {error && <p className="text-sm text-destructive">{error}</p>}
-
-                <Button
-                  onClick={handleExtract}
-                  disabled={!text.trim() || isExtracting}
-                  className="w-full"
-                >
-                  {isExtracting ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Extracting...
-                    </>
-                  ) : (
-                    "Extract Vocabulary Words"
-                  )}
-                </Button>
-
-                {extractedWords.length > 0 && (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold">
-                        Found {extractedWords.length} words
-                      </h3>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => {
-                          setExtractedWords([])
-                          setText("")
-                        }}
-                      >
-                        Clear
-                      </Button>
-                    </div>
-
-                    <div className="space-y-2">
-                      {extractedWords.map((w, index) => (
-                        <div
-                          key={index}
-                          className={`rounded-lg border p-4 transition-colors ${
-                            w.selected ? "bg-accent" : "bg-muted/50"
-                          }`}
-                        >
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center gap-2">
-                                <input
-                                  type="checkbox"
-                                  checked={w.selected}
-                                  onChange={() => handleToggleWord(index)}
-                                  className="h-4 w-4"
-                                />
-                                <h4 className="font-semibold capitalize">
-                                  {w.word}
-                                </h4>
-                                {w.part_of_speech && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="text-xs"
-                                  >
-                                    {w.part_of_speech}
-                                  </Badge>
-                                )}
-                              </div>
-                              <p className="mt-1 text-sm text-muted-foreground">
-                                {w.definition}
-                              </p>
-                            </div>
-                          </div>
+                          )}
                         </div>
                       ))}
                     </div>
 
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        onClick={() =>
-                          setExtractedWords(
-                            extractedWords.map((w) => ({
-                              ...w,
-                              selected: true,
-                            }))
-                          )
-                        }
-                      >
-                        Select All
-                      </Button>
-                      <Button
-                        variant="outline"
-                        onClick={() =>
-                          setExtractedWords(
-                            extractedWords.map((w) => ({
-                              ...w,
-                              selected: false,
-                            }))
-                          )
-                        }
-                      >
-                        Deselect All
-                      </Button>
-                      <Button
-                        onClick={handleSaveExtracted}
-                        disabled={
-                          !extractedWords.some((w) => w.selected) ||
-                          isSavingExtracted
-                        }
-                        className="flex-1"
-                      >
-                        {isSavingExtracted ? (
-                          <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Saving...
-                          </>
-                        ) : (
-                          `Save Selected (${extractedWords.filter((w) => w.selected).length})`
-                        )}
-                      </Button>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <Label>Antonyms</Label>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={handleAddAntonym}
+                        >
+                          <Plus className="mr-1 h-4 w-4" />
+                          Add
+                        </Button>
+                      </div>
+                      {antonyms.map((antonym, index) => (
+                        <div key={index} className="flex gap-2">
+                          <Input
+                            value={antonym}
+                            onChange={(e) =>
+                              handleAntonymChange(index, e.target.value)
+                            }
+                            placeholder="antonym"
+                            className="flex-1"
+                          />
+                          {antonyms.length > 1 && (
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleRemoveAntonym(index)}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="etymology">Etymology</Label>
+                    <Textarea
+                      id="etymology"
+                      value={etymology}
+                      onChange={(e) => setEtymology(e.target.value)}
+                      placeholder="Origin and history of the word..."
+                      rows={2}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="notes">Notes</Label>
+                    <Textarea
+                      id="notes"
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      placeholder="Personal notes or memory aids..."
+                      rows={2}
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <Button variant="outline" onClick={resetForm}>
+                      Reset
+                    </Button>
+                    <Button
+                      onClick={handleSave}
+                      disabled={!word.trim() || !definition.trim() || isSaving}
+                    >
+                      {isSaving ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        "Save Word"
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-6">
+          <div className="border border-border bg-card p-6">
+            <div className="space-y-4">
+              <Label htmlFor="text">Paste your text here</Label>
+              <Textarea
+                id="text"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                placeholder="Paste an article, essay, or any text to extract vocabulary words from..."
+                rows={8}
+              />
+              {error && <p className="text-sm text-red-600">{error}</p>})
+              <Button
+                onClick={handleExtract}
+                disabled={!text.trim() || isExtracting}
+                className="w-full"
+              >
+                {isExtracting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Extracting...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="mr-2 h-4 w-4" />
+                    Extract Vocabulary Words
+                  </>
                 )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
+              </Button>
+            </div>
+          </div>
+
+          {extractedWords.length > 0 && (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold">
+                  Found {extractedWords.length} words
+                </h3>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    setExtractedWords([])
+                    setText("")
+                  }}
+                >
+                  Clear
+                </Button>
+              </div>
+
+              <div className="space-y-2">
+                {extractedWords.map((w, index) => (
+                  <div
+                    key={index}
+                    className={`border transition-colors ${
+                      w.selected ? "border-primary bg-primary/5" : "border-border bg-card"
+                    } p-4`}
+                  >
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1">
+                        <label className="flex cursor-pointer items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={w.selected}
+                            onChange={() => handleToggleWord(index)}
+                            className="h-4 w-4"
+                          />
+                          <span className="font-display font-medium capitalize">
+                            {w.word}
+                          </span>
+                          {w.part_of_speech && (
+                            <span className="border border-border bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground">
+                              {w.part_of_speech}
+                            </span>
+                          )}
+                        </label>
+                        <p className="ml-6 mt-1 text-sm text-muted-foreground">
+                          {w.definition}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setExtractedWords(
+                      extractedWords.map((w) => ({ ...w, selected: true }))
+                    )
+                  }
+                >
+                  Select All
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    setExtractedWords(
+                      extractedWords.map((w) => ({ ...w, selected: false }))
+                    )
+                  }
+                >
+                  Deselect All
+                </Button>
+                <Button
+                  onClick={handleSaveExtracted}
+                  disabled={
+                    !extractedWords.some((w) => w.selected) || isSavingExtracted
+                  }
+                  className="flex-1"
+                >
+                  {isSavingExtracted ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    `Save Selected (${extractedWords.filter((w) => w.selected).length})`
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

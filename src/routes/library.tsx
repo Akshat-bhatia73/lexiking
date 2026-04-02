@@ -1,7 +1,7 @@
 import { useAuth } from "@clerk/tanstack-react-start"
 import { useQuery } from "convex/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Archive, LayoutGrid, List, Plus, Search } from "lucide-react"
 import { api } from "../../convex/_generated/api"
 import { Button } from "@/components/ui/button"
@@ -19,25 +19,22 @@ function Library() {
   const [view, setView] = useState<"list" | "grid">("list")
   const [filter, setFilter] = useState<"all" | "due" | "archived">("all")
 
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      navigate({ to: "/" })
+    }
+  }, [isLoaded, isSignedIn, navigate])
+
   const words = useQuery(api.words.list, {
     search: search || undefined,
     archived: filter === "archived" ? true : false,
   })
   const dueWords = useQuery(api.words.dueToday, {})
 
-  if (!isLoaded) {
+  if (!isLoaded || !isSignedIn) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
         <div className="h-8 w-8 animate-pulse bg-muted" />
-      </div>
-    )
-  }
-
-  if (!isSignedIn) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground">Please sign in to view your library</p>
-        <Button onClick={() => navigate({ to: "/" })}>Go Home</Button>
       </div>
     )
   }

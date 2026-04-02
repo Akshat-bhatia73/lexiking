@@ -14,7 +14,7 @@ import {
   useRouteContext,
 } from "@tanstack/react-router"
 import { ConvexProviderWithClerk } from "convex/react-clerk"
-import { BarChart3, BookOpen, LayoutGrid, Plus } from "lucide-react"
+import { BarChart3, BookMarked, LayoutGrid, Plus } from "lucide-react"
 import appCss from "../styles.css?url"
 import type { ConvexQueryClient } from "@convex-dev/react-query"
 import type { ConvexReactClient } from "convex/react"
@@ -39,7 +39,10 @@ export const Route = createRootRouteWithContext<{
           "Build your vocabulary with AI-powered enrichment and spaced repetition. Track, learn, and master new words effortlessly.",
       },
     ],
-    links: [{ rel: "stylesheet", href: appCss }, {rel: "icon", href: "/favicon.svg" }],
+    links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: "/favicon.svg" },
+    ],
   }),
   errorComponent: ({ error }) => (
     <html lang="en">
@@ -51,7 +54,9 @@ export const Route = createRootRouteWithContext<{
       <body className="bg-background text-foreground">
         <main className="flex min-h-screen items-center justify-center">
           <div className="text-center">
-            <h1 className="font-display text-2xl font-bold">Something went wrong</h1>
+            <h1 className="font-display text-2xl font-bold">
+              Something went wrong
+            </h1>
             <p className="mt-2 text-muted-foreground">{error.message}</p>
           </div>
         </main>
@@ -86,10 +91,7 @@ function Shell({ children }: { children: React.ReactNode }) {
   const context = useRouteContext({ from: Route.id })
   return (
     <ClerkProvider>
-      <ConvexProviderWithClerk
-        client={context.convexClient}
-        useAuth={useAuth}
-      >
+      <ConvexProviderWithClerk client={context.convexClient} useAuth={useAuth}>
         <html lang="en">
           <head>
             <HeadContent />
@@ -118,7 +120,9 @@ function NavLink({
     <Link
       to={to}
       className={`text-sm font-medium transition-colors ${
-        active ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+        active
+          ? "text-foreground"
+          : "text-muted-foreground hover:text-foreground"
       }`}
     >
       {children}
@@ -134,25 +138,32 @@ function Navigation() {
     <nav className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <Link to="/" className="flex items-center gap-2">
-          <BookOpen className="h-5 w-5 text-primary" />
+          <BookMarked strokeWidth={1.5} className="h-5 w-5 text-primary" />
           <span className="font-display text-xl font-semibold tracking-tight">
             LexiKing
           </span>
         </Link>
 
         <div className="flex items-center gap-8">
-          <NavLink to="/library" active={location.pathname === "/library"}>
-            <span className="flex items-center gap-1.5">
-              <LayoutGrid className="h-4 w-4" />
-              Library
-            </span>
-          </NavLink>
-          <NavLink to="/analytics" active={location.pathname === "/analytics"}>
-            <span className="flex items-center gap-1.5">
-              <BarChart3 className="h-4 w-4" />
-              Analytics
-            </span>
-          </NavLink>
+          {isSignedIn && (
+            <>
+              <NavLink to="/library" active={location.pathname === "/library"}>
+                <span className="flex items-center gap-1.5">
+                  <LayoutGrid className="h-4 w-4" />
+                  Library
+                </span>
+              </NavLink>
+              <NavLink
+                to="/analytics"
+                active={location.pathname === "/analytics"}
+              >
+                <span className="flex items-center gap-1.5">
+                  <BarChart3 className="h-4 w-4" />
+                  Analytics
+                </span>
+              </NavLink>
+            </>
+          )}
         </div>
 
         <div className="flex items-center gap-4">

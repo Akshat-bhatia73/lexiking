@@ -11,6 +11,14 @@ interface EnrichedWord {
   etymology: string
 }
 
+interface ExtractedWord {
+  word?: string
+  definition?: string
+  part_of_speech?: string
+  pronunciation?: string
+  examples?: Array<string>
+}
+
 export const enrichWord = action({
   args: {
     word: v.string(),
@@ -60,8 +68,7 @@ JSON:`
     )
 
     if (!response.ok) {
-      const error = await response.text()
-      console.error("Gemini API error:", error)
+      console.error("Gemini API error:", response.status, response.statusText)
       throw new Error(`Gemini API error: ${response.status}`)
     }
 
@@ -82,7 +89,7 @@ JSON:`
         etymology: parsed.etymology || "",
       }
     } catch (parseError) {
-      console.error("Failed to parse Gemini response:", text)
+      console.error("Failed to parse AI response: invalid JSON format")
       throw new Error("Failed to parse AI response")
     }
   },
@@ -136,8 +143,7 @@ JSON array:`
     )
 
     if (!response.ok) {
-      const error = await response.text()
-      console.error("Gemini API error:", error)
+      console.error("Gemini API error:", response.status, response.statusText)
       throw new Error(`Gemini API error: ${response.status}`)
     }
 
@@ -153,17 +159,17 @@ JSON array:`
 
       return Array.isArray(parsed)
         ? parsed
-            .map((item: any) => ({
+            .map((item: ExtractedWord) => ({
               word: item.word?.toLowerCase() || "",
               definition: item.definition || "",
               part_of_speech: item.part_of_speech || "",
               pronunciation: item.pronunciation || "",
               examples: Array.isArray(item.examples) ? item.examples : [],
             }))
-            .filter((w: any) => w.word && w.definition)
+            .filter((w) => w.word && w.definition)
         : []
     } catch (parseError) {
-      console.error("Failed to parse Gemini response:", text)
+      console.error("Failed to parse AI response: invalid JSON format")
       throw new Error("Failed to parse AI response")
     }
   },

@@ -31,7 +31,9 @@ function Analytics() {
   if (!isSignedIn) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground">Please sign in to view analytics</p>
+        <p className="text-muted-foreground">
+          Please sign in to view analytics
+        </p>
         <Button onClick={() => navigate({ to: "/" })}>Go Home</Button>
       </div>
     )
@@ -65,7 +67,7 @@ function Analytics() {
           className={`px-4 py-2 text-sm transition-colors ${
             timeRange === 30
               ? "bg-primary text-primary-foreground"
-              : "border border-borderhover:bg-secondary"
+              : "border border-border hover:bg-secondary"
           }`}
         >
           30 Days
@@ -167,7 +169,9 @@ function Analytics() {
                 <span className="font-semibold">{stats.total}</span>
               </div>
               <div className="flex items-center justify-between pt-4">
-                <span className="text-muted-foreground">Successful Reviews</span>
+                <span className="text-muted-foreground">
+                  Successful Reviews
+                </span>
                 <span className="font-semibold">{stats.successful}</span>
               </div>
               <div className="flex items-center justify-between pt-4">

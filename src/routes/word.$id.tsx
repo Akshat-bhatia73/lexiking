@@ -3,14 +3,27 @@ import { useMutation, useQuery } from "convex/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { Archive, ArrowLeft, Calendar, Trash2, TrendingUp } from "lucide-react"
 import { api } from "../../convex/_generated/api"
+import type { Id } from "../../convex/_generated/dataModel"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 
 const RATING_LABELS: Record<number, { label: string; color: string }> = {
-  0: { label: "Again", color: "border border-red-500 bg-red-500/10 text-red-600" },
-  2: { label: "Hard", color: "border border-orange-500 bg-orange-500/10 text-orange-600" },
-  4: { label: "Good", color: "border border-blue-500 bg-blue-500/10 text-blue-600" },
-  5: { label: "Easy", color: "border border-green-500 bg-green-500/10 text-green-600" },
+  0: {
+    label: "Again",
+    color: "border border-red-500 bg-red-500/10 text-red-600",
+  },
+  2: {
+    label: "Hard",
+    color: "border border-orange-500 bg-orange-500/10 text-orange-600",
+  },
+  4: {
+    label: "Good",
+    color: "border border-blue-500 bg-blue-500/10 text-blue-600",
+  },
+  5: {
+    label: "Easy",
+    color: "border border-green-500 bg-green-500/10 text-green-600",
+  },
 }
 
 export const Route = createFileRoute("/word/$id")({
@@ -21,8 +34,9 @@ function WordDetail() {
   const { id } = Route.useParams()
   const { isSignedIn, isLoaded } = useAuth()
   const navigate = useNavigate()
-  const word = useQuery(api.words.get, { id: id as any })
-  const reviews = useQuery(api.reviews.byWord, { wordId: id as any })
+  const wordId = id as Id<"words">
+  const word = useQuery(api.words.get, { id: wordId })
+  const reviews = useQuery(api.reviews.byWord, { wordId })
   const archiveWord = useMutation(api.words.archive)
   const deleteWord = useMutation(api.words.remove)
 
@@ -130,7 +144,7 @@ function WordDetail() {
 
         <div className="space-y-6 px-8 py-6">
           <section>
-            <h3 className="mb-2 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+            <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
               Definition
             </h3>
             <p className="text-lg leading-relaxed">{word.definition}</p>
@@ -138,7 +152,7 @@ function WordDetail() {
 
           {word.examples && word.examples.length > 0 && (
             <section>
-              <h3 className="mb-2 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+              <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
                 Examples
               </h3>
               <ul className="list-inside list-disc space-y-1">
@@ -156,7 +170,7 @@ function WordDetail() {
             <section className="grid gap-6 sm:grid-cols-2">
               {word.synonyms && word.synonyms.length > 0 && (
                 <div>
-                  <h3 className="mb-2 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+                  <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
                     Synonyms
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -173,7 +187,7 @@ function WordDetail() {
               )}
               {word.antonyms && word.antonyms.length > 0 && (
                 <div>
-                  <h3 className="mb-2 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+                  <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
                     Antonyms
                   </h3>
                   <div className="flex flex-wrap gap-2">
@@ -193,7 +207,7 @@ function WordDetail() {
 
           {word.etymology && (
             <section>
-              <h3 className="mb-2 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+              <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
                 Etymology
               </h3>
               <p className="text-muted-foreground">{word.etymology}</p>
@@ -202,7 +216,7 @@ function WordDetail() {
 
           {word.notes && (
             <section>
-              <h3 className="mb-2 text-sm font-medium uppercase tracking-wide text-muted-foreground">
+              <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
                 Notes
               </h3>
               <p className="text-muted-foreground">{word.notes}</p>
@@ -230,11 +244,15 @@ function WordDetail() {
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="border border-border bg-secondary/50 p-4">
                 <p className="text-sm text-muted-foreground">Reviews</p>
-                <p className="font-display text-2xl font-bold">{word.repetitions}</p>
+                <p className="font-display text-2xl font-bold">
+                  {word.repetitions}
+                </p>
               </div>
               <div className="border border-border bg-secondary/50 p-4">
                 <p className="text-sm text-muted-foreground">Interval</p>
-                <p className="font-display text-2xl font-bold">{word.interval} days</p>
+                <p className="font-display text-2xl font-bold">
+                  {word.interval} days
+                </p>
               </div>
               <div className="border border-border bg-secondary/50 p-4">
                 <p className="text-sm text-muted-foreground">Ease Factor</p>
@@ -262,7 +280,9 @@ function WordDetail() {
                       className="flex items-center justify-between border border-border bg-secondary/30 p-3"
                     >
                       <div className="flex items-center gap-3">
-                        <span className={`px-2 py-0.5 text-xs font-medium ${rating.color}`}>
+                        <span
+                          className={`px-2 py-0.5 text-xs font-medium ${rating.color}`}
+                        >
                           {rating.label}
                         </span>
                         <div className="flex items-center gap-2 text-sm text-muted-foreground">

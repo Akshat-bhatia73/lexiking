@@ -5,6 +5,8 @@ import { getDefaultSM2State } from "./lib/sm2"
 
 /**
  * List all words for the authenticated user.
+ * Uses indexed queries for efficient filtering by archived status.
+ * Search filtering is done in-memory (Convex doesn't support full-text search natively).
  */
 export const list = query({
   args: {
@@ -14,30 +16,28 @@ export const list = query({
   handler: async (ctx, args) => {
     const userId = await getAuthenticatedUserId(ctx)
 
+    // Use indexed query for archived filtering (defaults to non-archived)
+    const showArchived = args.archived ?? false
+
     const results = await ctx.db
       .query("words")
-      .withIndex("by_user", (q) => q.eq("user_id", userId))
+      .withIndex("by_user_archived_created", (q) =>
+        q.eq("user_id", userId).eq("is_archived", showArchived)
+      )
+      .order("desc")
       .collect()
 
-    // Filter by archived status (default: show non-archived)
-    let filtered = results.filter((w) =>
-      args.archived !== undefined
-        ? w.is_archived === args.archived
-        : !w.is_archived
-    )
-
-    // Filter by search term
+    // Filter by search term in-memory
     if (args.search) {
       const searchLower = args.search.toLowerCase()
-      filtered = filtered.filter(
+      return results.filter(
         (w) =>
           w.word.toLowerCase().includes(searchLower) ||
           w.definition.toLowerCase().includes(searchLower)
       )
     }
 
-    // Sort by creation date (newest first)
-    return filtered.sort((a, b) => b.created_at - a.created_at)
+    return results
   },
 })
 
@@ -210,7 +210,7 @@ export const archive = mutation({
 })
 
 /**
- * Permanently delete a word.
+ * Permanently delete a word and its associated reviews.
  */
 export const remove = mutation({
   args: { id: v.id("words") },
@@ -220,6 +220,18 @@ export const remove = mutation({
 
     if (!word || word.user_id !== userId) {
       throw new Error("Word not found")
+    }
+
+    // Cascade delete all reviews for this word
+    const reviews = await ctx.db
+      .query("reviews")
+      .withIndex("by_user_word", (q) =>
+        q.eq("user_id", userId).eq("word_id", args.id)
+      )
+      .collect()
+
+    for (const review of reviews) {
+      await ctx.db.delete(review._id)
     }
 
     await ctx.db.delete(args.id)

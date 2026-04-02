@@ -31,7 +31,13 @@ export default defineSchema({
   })
     .index("by_user", ["user_id"])
     .index("by_user_word", ["user_id", "word"])
-    .index("by_user_next_review", ["user_id", "next_review_at"]),
+    .index("by_user_next_review", ["user_id", "next_review_at"])
+    .index("by_user_archived", ["user_id", "is_archived"])
+    .index("by_user_archived_created", [
+      "user_id",
+      "is_archived",
+      "created_at",
+    ]),
 
   reviews: defineTable({
     // User isolation

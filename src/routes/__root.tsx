@@ -39,7 +39,7 @@ export const Route = createRootRouteWithContext<{
           "Build your vocabulary with AI-powered enrichment and spaced repetition. Track, learn, and master new words effortlessly.",
       },
     ],
-    links: [{ rel: "stylesheet", href: appCss }],
+    links: [{ rel: "stylesheet", href: appCss }, {rel: "icon", href: "/favicon.svg" }],
   }),
   errorComponent: ({ error }) => (
     <html lang="en">

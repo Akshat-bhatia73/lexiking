@@ -138,8 +138,8 @@ function AddWord() {
         })
       }
       navigate({ to: "/library" })
-    } catch (error) {
-      console.error("Failed to save words:", error)
+    } catch (err) {
+      console.error("Failed to save words:", err)
       setError("Failed to save some words. Please try again.")
     } finally {
       setIsSavingExtracted(false)
@@ -202,8 +202,8 @@ function AddWord() {
         notes: notes.trim() || undefined,
       })
       navigate({ to: "/word/$id", params: { id: wordId } })
-    } catch (error) {
-      console.error("Failed to save word:", error)
+    } catch (err) {
+      console.error("Failed to save word:", err)
     } finally {
       setIsSaving(false)
     }
@@ -236,7 +236,8 @@ function AddWord() {
       <div className="mb-8">
         <h1 className="font-display text-3xl font-bold">Add New Word</h1>
         <p className="mt-1 text-muted-foreground">
-          Enter a word and let AI enrich it with definitions, examples, and more.
+          Enter a word and let AI enrich it with definitions, examples, and
+          more.
         </p>
       </div>
 
@@ -528,7 +529,7 @@ function AddWord() {
                 placeholder="Paste an article, essay, or any text to extract vocabulary words from..."
                 rows={8}
               />
-              {error && <p className="text-sm text-red-600">{error}</p>})
+              {error && <p className="text-sm text-red-600">{error}</p>}
               <Button
                 onClick={handleExtract}
                 disabled={!text.trim() || isExtracting}
@@ -572,7 +573,9 @@ function AddWord() {
                   <div
                     key={index}
                     className={`border transition-colors ${
-                      w.selected ? "border-primary bg-primary/5" : "border-border bg-card"
+                      w.selected
+                        ? "border-primary bg-primary/5"
+                        : "border-border bg-card"
                     } p-4`}
                   >
                     <div className="flex items-start justify-between">
@@ -593,7 +596,7 @@ function AddWord() {
                             </span>
                           )}
                         </label>
-                        <p className="ml-6 mt-1 text-sm text-muted-foreground">
+                        <p className="mt-1 ml-6 text-sm text-muted-foreground">
                           {w.definition}
                         </p>
                       </div>

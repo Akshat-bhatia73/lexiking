@@ -2,9 +2,8 @@ import { useAuth } from "@clerk/tanstack-react-start"
 import { useQuery } from "convex/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
-import { Award, BookOpen, Target, TrendingUp } from "lucide-react"
 import { api } from "../../convex/_generated/api"
-import { Skeleton } from "@/components/ui/skeleton"
+import { LoadingText } from "@/components/ui/skeleton"
 
 export const Route = createFileRoute("/analytics")({
   component: Analytics,
@@ -28,7 +27,7 @@ function Analytics() {
   if (!isLoaded || !isSignedIn) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-pulse bg-muted" />
+        <LoadingText />
       </div>
     )
   }
@@ -39,188 +38,147 @@ function Analytics() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
       <div className="mb-8">
-        <h1 className="font-display text-3xl font-bold">Analytics</h1>
-        <p className="mt-1 text-muted-foreground">
+        <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+          ANALYTICS
+        </span>
+        <h1 className="mt-1 font-sans text-4xl font-medium text-[var(--text-display)]">
+          Learning Progress
+        </h1>
+        <p className="mt-1 text-[var(--text-secondary)]">
           Track your vocabulary learning progress
         </p>
       </div>
 
-      <div className="mb-8 flex gap-2">
+      <div className="mb-8 segmented-control">
         <button
           onClick={() => setTimeRange(7)}
-          className={`px-4 py-2 text-sm transition-colors ${
-            timeRange === 7
-              ? "bg-primary text-primary-foreground"
-              : "border border-border hover:bg-secondary"
-          }`}
+          className={`segment ${timeRange === 7 ? "segment-active" : ""}`}
         >
-          7 Days
+          7 DAYS
         </button>
         <button
           onClick={() => setTimeRange(30)}
-          className={`px-4 py-2 text-sm transition-colors ${
-            timeRange === 30
-              ? "bg-primary text-primary-foreground"
-              : "border border-border hover:bg-secondary"
-          }`}
+          className={`segment ${timeRange === 30 ? "segment-active" : ""}`}
         >
-          30 Days
+          30 DAYS
         </button>
         <button
           onClick={() => setTimeRange(90)}
-          className={`px-4 py-2 text-sm transition-colors ${
-            timeRange === 90
-              ? "bg-primary text-primary-foreground"
-              : "border border-border hover:bg-secondary"
-          }`}
+          className={`segment ${timeRange === 90 ? "segment-active" : ""}`}
         >
-          90 Days
+          90 DAYS
         </button>
       </div>
 
       {isLoading ? (
-        <div className="space-y-8">
-          <div className="grid gap-4 md:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="border border-border bg-card p-6">
-                <Skeleton className="mb-2 h-4 w-20" />
-                <Skeleton className="h-8 w-16" />
-              </div>
-            ))}
-          </div>
+        <div className="py-12 text-center">
+          <LoadingText>LOADING...</LoadingText>
         </div>
       ) : (
         <div className="space-y-8">
           <div className="grid gap-4 md:grid-cols-4">
             <StatCard
-              icon={<BookOpen className="h-5 w-5" />}
-              label="Total Words"
+              label="TOTAL WORDS"
               value={allWords.length}
             />
             <StatCard
-              icon={<Target className="h-5 w-5" />}
-              label="Due Today"
+              label="DUE TODAY"
               value={dueWords.length}
             />
             <StatCard
-              icon={<TrendingUp className="h-5 w-5" />}
-              label="Reviews"
+              label="REVIEWS"
               value={stats.total}
             />
             <StatCard
-              icon={<Award className="h-5 w-5" />}
-              label="Retention"
+              label="RETENTION"
               value={`${Math.round(stats.retentionRate * 100)}%`}
             />
           </div>
 
-          <div className="border border-border bg-card">
-            <div className="border-b border-border px-6 py-4">
-              <h2 className="font-semibold">Rating Breakdown</h2>
-              <p className="text-sm text-muted-foreground">
+          <div className="border border-[var(--border)] bg-[var(--surface)]">
+            <div className="border-b border-[var(--border)] px-6 py-4">
+              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+                RATING BREAKDOWN
+              </span>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">
                 How you've rated your recalls
               </p>
             </div>
             <div className="grid gap-4 p-6 sm:grid-cols-4">
               <RatingCard
-                label="Again"
+                label="AGAIN"
                 count={stats.breakdown.again}
-                color="border-red-500 bg-red-500/10"
-                textColor="text-red-600"
                 description="Couldn't recall"
+                className="border-[var(--accent)] bg-[var(--accent-subtle)]"
+                textColor="text-[var(--accent)]"
               />
               <RatingCard
-                label="Hard"
+                label="HARD"
                 count={stats.breakdown.hard}
-                color="border-orange-500 bg-orange-500/10"
-                textColor="text-orange-600"
                 description="Significant difficulty"
+                className="border-[var(--warning)] bg-[var(--warning)]/10"
+                textColor="text-[var(--warning)]"
               />
               <RatingCard
-                label="Good"
+                label="GOOD"
                 count={stats.breakdown.good}
-                color="border-blue-500 bg-blue-500/10"
-                textColor="text-blue-600"
                 description="Correct with hesitation"
+                className="border-[var(--interactive)] bg-[var(--interactive)]/10"
+                textColor="text-[var(--interactive)]"
               />
               <RatingCard
-                label="Easy"
+                label="EASY"
                 count={stats.breakdown.easy}
-                color="border-green-500 bg-green-500/10"
-                textColor="text-green-600"
                 description="Perfect recall"
+                className="border-[var(--success)] bg-[var(--success)]/10"
+                textColor="text-[var(--success)]"
               />
             </div>
           </div>
 
-          <div className="border border-border bg-card">
-            <div className="border-b border-border px-6 py-4">
-              <h2 className="font-semibold">Summary</h2>
+          <div className="border border-[var(--border)] bg-[var(--surface)]">
+            <div className="border-b border-[var(--border)] px-6 py-4">
+              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+                SUMMARY
+              </span>
             </div>
-            <div className="divide-y divide-border p-6">
-              <div className="flex items-center justify-between">
-                <span className="text-muted-foreground">Total Reviews</span>
-                <span className="font-semibold">{stats.total}</span>
-              </div>
-              <div className="flex items-center justify-between pt-4">
-                <span className="text-muted-foreground">
-                  Successful Reviews
-                </span>
-                <span className="font-semibold">{stats.successful}</span>
-              </div>
-              <div className="flex items-center justify-between pt-4">
-                <span className="text-muted-foreground">Failed Reviews</span>
-                <span className="font-semibold">{stats.failed}</span>
-              </div>
-              <div className="flex items-center justify-between pt-4">
-                <span className="text-muted-foreground">Success Rate</span>
-                <span className="font-semibold">
-                  {stats.total > 0
-                    ? Math.round((stats.successful / stats.total) * 100)
-                    : 0}
-                  %
-                </span>
-              </div>
+            <div className="divide-y divide-[var(--border)] p-6">
+              <DataRow label="TOTAL REVIEWS" value={stats.total} />
+              <DataRow label="SUCCESSFUL REVIEWS" value={stats.successful} />
+              <DataRow label="FAILED REVIEWS" value={stats.failed} />
+              <DataRow
+                label="SUCCESS RATE"
+                value={`${stats.total > 0 ? Math.round((stats.successful / stats.total) * 100) : 0}%`}
+              />
             </div>
           </div>
 
           {allWords.length > 0 && (
-            <div className="border border-border bg-card">
-              <div className="border-b border-border px-6 py-4">
-                <h2 className="font-semibold">Words by Status</h2>
-                <p className="text-sm text-muted-foreground">
+            <div className="border border-[var(--border)] bg-[var(--surface)]">
+              <div className="border-b border-[var(--border)] px-6 py-4">
+                <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+                  WORDS BY STATUS
+                </span>
+                <p className="mt-1 text-sm text-[var(--text-secondary)]">
                   Learning progress distribution
                 </p>
               </div>
-              <div className="divide-y divide-border p-6">
-                <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">
-                    New <span className="text-xs">(not reviewed)</span>
-                  </span>
-                  <span className="border border-border bg-secondary px-3 py-1 text-sm">
-                    {allWords.filter((w) => w.repetitions === 0).length}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between pt-4">
-                  <span className="text-muted-foreground">
-                    Learning <span className="text-xs">(1-2 reviews)</span>
-                  </span>
-                  <span className="border border-border bg-secondary px-3 py-1 text-sm">
-                    {
-                      allWords.filter(
-                        (w) => w.repetitions >= 1 && w.repetitions <= 2
-                      ).length
-                    }
-                  </span>
-                </div>
-                <div className="flex items-center justify-between pt-4">
-                  <span className="text-muted-foreground">
-                    Mastered <span className="text-xs">(3+ reviews)</span>
-                  </span>
-                  <span className="border border-border bg-secondary px-3 py-1 text-sm">
-                    {allWords.filter((w) => w.repetitions >= 3).length}
-                  </span>
-                </div>
+              <div className="divide-y divide-[var(--border)] p-6">
+                <DataRow
+                  label="NEW"
+                  sublabel="(not reviewed)"
+                  value={allWords.filter((w) => w.repetitions === 0).length}
+                />
+                <DataRow
+                  label="LEARNING"
+                  sublabel="(1-2 reviews)"
+                  value={allWords.filter((w) => w.repetitions >= 1 && w.repetitions <= 2).length}
+                />
+                <DataRow
+                  label="MASTERED"
+                  sublabel="(3+ reviews)"
+                  value={allWords.filter((w) => w.repetitions >= 3).length}
+                />
               </div>
             </div>
           )}
@@ -231,25 +189,20 @@ function Analytics() {
 }
 
 function StatCard({
-  icon,
   label,
   value,
 }: {
-  icon: React.ReactNode
   label: string
   value: string | number
 }) {
   return (
-    <div className="border border-border bg-card p-6">
-      <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 items-center justify-center border border-border bg-secondary text-primary">
-          {icon}
-        </div>
-        <div>
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="font-display text-2xl font-bold">{value}</p>
-        </div>
-      </div>
+    <div className="border border-[var(--border)] bg-[var(--surface)] p-6">
+      <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+        {label}
+      </span>
+      <p className="mt-2 font-mono text-3xl font-bold text-[var(--text-display)]">
+        {value}
+      </p>
     </div>
   )
 }
@@ -257,21 +210,49 @@ function StatCard({
 function RatingCard({
   label,
   count,
-  color,
-  textColor,
   description,
+  className,
+  textColor,
 }: {
   label: string
   count: number
-  color: string
-  textColor: string
   description: string
+  className: string
+  textColor: string
 }) {
   return (
-    <div className={`${color} border p-4`}>
-      <p className={`text-sm ${textColor}`}>{label}</p>
-      <p className={`font-display text-2xl font-bold ${textColor}`}>{count}</p>
-      <p className="text-xs text-muted-foreground">{description}</p>
+    <div className={`border p-4 ${className}`}>
+      <p className={`font-mono text-[11px] uppercase tracking-[0.08em] ${textColor}`}>
+        {label}
+      </p>
+      <p className={`font-mono text-2xl font-bold mt-1 ${textColor}`}>{count}</p>
+      <p className="text-xs text-[var(--text-secondary)] mt-1">{description}</p>
+    </div>
+  )
+}
+
+function DataRow({
+  label,
+  sublabel,
+  value,
+}: {
+  label: string
+  sublabel?: string
+  value: string | number
+}) {
+  return (
+    <div className="flex items-center justify-between py-4 first:pt-0 last:pb-0">
+      <div className="flex items-center gap-2">
+        <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+          {label}
+        </span>
+        {sublabel && (
+          <span className="text-xs text-[var(--text-disabled)]">{sublabel}</span>
+        )}
+      </div>
+      <span className="font-mono text-lg font-medium text-[var(--text-display)]">
+        {value}
+      </span>
     </div>
   )
 }

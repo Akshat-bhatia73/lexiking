@@ -1,28 +1,27 @@
 import { useAuth } from "@clerk/tanstack-react-start"
 import { useMutation, useQuery } from "convex/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { Archive, ArrowLeft, Calendar, Trash2, TrendingUp } from "lucide-react"
 import { api } from "../../convex/_generated/api"
 import type { Id } from "../../convex/_generated/dataModel"
 import { Button } from "@/components/ui/button"
-import { Skeleton } from "@/components/ui/skeleton"
+import { LoadingText } from "@/components/ui/skeleton"
 
-const RATING_LABELS: Record<number, { label: string; color: string }> = {
+const RATING_LABELS: Record<number, { label: string; className: string }> = {
   0: {
-    label: "Again",
-    color: "border border-red-500 bg-red-500/10 text-red-600",
+    label: "AGAIN",
+    className: "border-[var(--accent)] bg-[var(--accent-subtle)] text-[var(--accent)]",
   },
   2: {
-    label: "Hard",
-    color: "border border-orange-500 bg-orange-500/10 text-orange-600",
+    label: "HARD",
+    className: "border-[var(--warning)] bg-[var(--warning)]/10 text-[var(--warning)]",
   },
   4: {
-    label: "Good",
-    color: "border border-blue-500 bg-blue-500/10 text-blue-600",
+    label: "GOOD",
+    className: "border-[var(--interactive)] bg-[var(--interactive)]/10 text-[var(--interactive)]",
   },
   5: {
-    label: "Easy",
-    color: "border border-green-500 bg-green-500/10 text-green-600",
+    label: "EASY",
+    className: "border-[var(--success)] bg-[var(--success)]/10 text-[var(--success)]",
   },
 }
 
@@ -43,7 +42,7 @@ function WordDetail() {
   if (!isLoaded) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-pulse bg-muted" />
+        <LoadingText />
       </div>
     )
   }
@@ -51,8 +50,8 @@ function WordDetail() {
   if (!isSignedIn) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground">Please sign in to view words</p>
-        <Button onClick={() => navigate({ to: "/" })}>Go Home</Button>
+        <p className="text-[var(--text-secondary)]">Please sign in to view words</p>
+        <Button onClick={() => navigate({ to: "/" })}>GO HOME</Button>
       </div>
     )
   }
@@ -60,11 +59,7 @@ function WordDetail() {
   if (word === undefined) {
     return (
       <div className="mx-auto max-w-2xl px-6 py-12">
-        <Skeleton className="mb-4 h-8 w-24" />
-        <Skeleton className="mb-6 h-10 w-48" />
-        <Skeleton className="mb-4 h-32 w-full" />
-        <Skeleton className="mb-4 h-24 w-full" />
-        <Skeleton className="h-16 w-full" />
+        <LoadingText>LOADING...</LoadingText>
       </div>
     )
   }
@@ -72,8 +67,8 @@ function WordDetail() {
   if (word === null) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4">
-        <p className="text-muted-foreground">Word not found</p>
-        <Button onClick={() => navigate({ to: "/" })}>Go Home</Button>
+        <p className="text-[var(--text-secondary)]">Word not found</p>
+        <Button onClick={() => navigate({ to: "/" })}>GO HOME</Button>
       </div>
     )
   }
@@ -116,48 +111,47 @@ function WordDetail() {
         onClick={() => navigate({ to: "/library" })}
         className="mb-6"
       >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to Library
+        ← BACK TO LIBRARY
       </Button>
 
-      <div className="border border-border bg-card">
-        <div className="border-b border-border px-8 py-6">
+      <div className="border border-[var(--border)] bg-[var(--surface)]">
+        <div className="border-b border-[var(--border)] px-8 py-6">
           <div className="flex items-center gap-3">
-            <h1 className="font-display text-3xl font-bold capitalize">
+            <h1 className="font-mono text-4xl font-medium capitalize text-[var(--text-display)]">
               {word.word}
             </h1>
             {word.part_of_speech && (
-              <span className="border border-border bg-secondary px-2 py-0.5 text-sm text-muted-foreground">
+              <span className="tag">
                 {word.part_of_speech}
               </span>
             )}
             {word.is_archived && (
-              <span className="border border-border bg-secondary px-2 py-0.5 text-sm text-muted-foreground">
-                Archived
+              <span className="tag">
+                ARCHIVED
               </span>
             )}
           </div>
           {word.pronunciation && (
-            <p className="mt-2 text-muted-foreground">{word.pronunciation}</p>
+            <p className="mt-2 text-[var(--text-secondary)] font-mono">{word.pronunciation}</p>
           )}
         </div>
 
         <div className="space-y-6 px-8 py-6">
           <section>
-            <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
-              Definition
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)] mb-2">
+              DEFINITION
             </h3>
-            <p className="text-lg leading-relaxed">{word.definition}</p>
+            <p className="text-lg leading-relaxed text-[var(--text-primary)]">{word.definition}</p>
           </section>
 
           {word.examples && word.examples.length > 0 && (
             <section>
-              <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
-                Examples
+              <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)] mb-2">
+                EXAMPLES
               </h3>
               <ul className="list-inside list-disc space-y-1">
                 {word.examples.map((example, index) => (
-                  <li key={index} className="text-muted-foreground">
+                  <li key={index} className="text-[var(--text-secondary)]">
                     {example}
                   </li>
                 ))}
@@ -170,15 +164,12 @@ function WordDetail() {
             <section className="grid gap-6 sm:grid-cols-2">
               {word.synonyms && word.synonyms.length > 0 && (
                 <div>
-                  <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
-                    Synonyms
+                  <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)] mb-2">
+                    SYNONYMS
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {word.synonyms.map((synonym, index) => (
-                      <span
-                        key={index}
-                        className="border border-border bg-secondary px-2 py-1 text-sm"
-                      >
+                      <span key={index} className="tag">
                         {synonym}
                       </span>
                     ))}
@@ -187,15 +178,12 @@ function WordDetail() {
               )}
               {word.antonyms && word.antonyms.length > 0 && (
                 <div>
-                  <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
-                    Antonyms
+                  <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)] mb-2">
+                    ANTONYMS
                   </h3>
                   <div className="flex flex-wrap gap-2">
                     {word.antonyms.map((antonym, index) => (
-                      <span
-                        key={index}
-                        className="border border-border bg-secondary px-2 py-1 text-sm"
-                      >
+                      <span key={index} className="tag">
                         {antonym}
                       </span>
                     ))}
@@ -207,56 +195,64 @@ function WordDetail() {
 
           {word.etymology && (
             <section>
-              <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
-                Etymology
+              <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)] mb-2">
+                ETYMOLOGY
               </h3>
-              <p className="text-muted-foreground">{word.etymology}</p>
+              <p className="text-[var(--text-secondary)]">{word.etymology}</p>
             </section>
           )}
 
           {word.notes && (
             <section>
-              <h3 className="mb-2 text-sm font-medium tracking-wide text-muted-foreground uppercase">
-                Notes
+              <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)] mb-2">
+                NOTES
               </h3>
-              <p className="text-muted-foreground">{word.notes}</p>
+              <p className="text-[var(--text-secondary)]">{word.notes}</p>
             </section>
           )}
 
-          <section className="border-t border-border pt-6">
-            <h3 className="mb-4 font-semibold">Details</h3>
-            <div className="grid gap-3 text-sm sm:grid-cols-2">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Added:</span>
-                <span>{formatDate(word.created_at)}</span>
+          <section className="border-t border-[var(--border)] pt-6">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)] mb-4">
+              DETAILS
+            </h3>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <div className="flex items-center gap-3">
+                <svg className="h-4 w-4 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="text-[var(--text-secondary)]">Added:</span>
+                <span className="font-mono text-[var(--text-primary)]">{formatDate(word.created_at)}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-                <span className="text-muted-foreground">Next Review:</span>
-                <span>{formatDate(word.next_review_at)}</span>
+              <div className="flex items-center gap-3">
+                <svg className="h-4 w-4 text-[var(--text-secondary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span className="text-[var(--text-secondary)]">Next Review:</span>
+                <span className="font-mono text-[var(--text-primary)]">{formatDate(word.next_review_at)}</span>
               </div>
             </div>
           </section>
 
-          <section className="border-t border-border pt-6">
-            <h3 className="mb-4 font-semibold">Learning Progress</h3>
+          <section className="border-t border-[var(--border)] pt-6">
+            <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)] mb-4">
+              LEARNING PROGRESS
+            </h3>
             <div className="grid gap-4 sm:grid-cols-3">
-              <div className="border border-border bg-secondary/50 p-4">
-                <p className="text-sm text-muted-foreground">Reviews</p>
-                <p className="font-display text-2xl font-bold">
+              <div className="border border-[var(--border)] bg-[var(--surface-raised)] p-4">
+                <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">REVIEWS</p>
+                <p className="font-mono text-2xl font-bold text-[var(--text-display)] mt-1">
                   {word.repetitions}
                 </p>
               </div>
-              <div className="border border-border bg-secondary/50 p-4">
-                <p className="text-sm text-muted-foreground">Interval</p>
-                <p className="font-display text-2xl font-bold">
-                  {word.interval} days
+              <div className="border border-[var(--border)] bg-[var(--surface-raised)] p-4">
+                <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">INTERVAL</p>
+                <p className="font-mono text-2xl font-bold text-[var(--text-display)] mt-1">
+                  {word.interval} DAYS
                 </p>
               </div>
-              <div className="border border-border bg-secondary/50 p-4">
-                <p className="text-sm text-muted-foreground">Ease Factor</p>
-                <p className="font-display text-2xl font-bold">
+              <div className="border border-[var(--border)] bg-[var(--surface-raised)] p-4">
+                <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">EASE FACTOR</p>
+                <p className="font-mono text-2xl font-bold text-[var(--text-display)] mt-1">
                   {word.ease_factor.toFixed(2)}
                 </p>
               </div>
@@ -264,11 +260,13 @@ function WordDetail() {
           </section>
 
           {reviews && reviews.length > 0 && (
-            <section className="border-t border-border pt-6">
+            <section className="border-t border-[var(--border)] pt-6">
               <div className="mb-4 flex items-center justify-between">
-                <h3 className="font-semibold">Review History</h3>
-                <span className="text-sm text-muted-foreground">
-                  {reviews.length} reviews
+                <h3 className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+                  REVIEW HISTORY
+                </h3>
+                <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+                  {reviews.length} REVIEWS
                 </span>
               </div>
               <div className="max-h-64 space-y-2 overflow-y-auto">
@@ -277,28 +275,22 @@ function WordDetail() {
                   return (
                     <div
                       key={review._id}
-                      className="flex items-center justify-between border border-border bg-secondary/30 p-3"
+                      className={`flex items-center justify-between border border-[var(--border)] p-3 ${rating.className.replace('text-[', 'bg-[var(--')}`}
                     >
                       <div className="flex items-center gap-3">
-                        <span
-                          className={`px-2 py-0.5 text-xs font-medium ${rating.color}`}
-                        >
+                        <span className={`px-2 py-0.5 text-xs font-mono font-medium ${rating.className}`}>
                           {rating.label}
                         </span>
-                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                          <TrendingUp className="h-3 w-3" />
-                          <span>
-                            EF: {review.ease_factor_before.toFixed(2)} →{" "}
-                            {review.ease_factor_after.toFixed(2)}
-                          </span>
-                          <span className="text-muted-foreground/50">|</span>
-                          <span>
-                            {review.interval_before}d → {review.interval_after}d
-                          </span>
+                        <div className="flex items-center gap-2 text-sm text-[var(--text-secondary)] font-mono">
+                          <span>EF: {review.ease_factor_before.toFixed(2)} → {review.ease_factor_after.toFixed(2)}</span>
+                          <span className="text-[var(--text-disabled)]">|</span>
+                          <span>{review.interval_before}d → {review.interval_after}d</span>
                         </div>
                       </div>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        <Calendar className="h-3 w-3" />
+                      <div className="flex items-center gap-1 text-xs text-[var(--text-secondary)] font-mono">
+                        <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
                         {formatDateTime(review.reviewed_at)}
                       </div>
                     </div>
@@ -306,25 +298,22 @@ function WordDetail() {
                 })}
               </div>
               {reviews.length > 10 && (
-                <p className="mt-3 text-center text-sm text-muted-foreground">
-                  Showing last 10 of {reviews.length} reviews
+                <p className="mt-3 text-center font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+                  SHOWING LAST 10 OF {reviews.length} REVIEWS
                 </p>
               )}
             </section>
           )}
 
-          <section className="flex gap-3 border-t border-border pt-6">
-            <Button variant="outline" onClick={handleArchive}>
-              <Archive className="mr-2 h-4 w-4" />
-              {word.is_archived ? "Unarchive" : "Archive"}
+          <section className="flex gap-3 border-t border-[var(--border)] pt-6">
+            <Button variant="secondary" onClick={handleArchive}>
+              {word.is_archived ? "UNARCHIVE" : "ARCHIVE"}
             </Button>
             <Button
-              variant="outline"
-              className="border-red-500/50 text-red-600 hover:bg-red-500/10"
+              variant="destructive"
               onClick={handleDelete}
             >
-              <Trash2 className="mr-2 h-4 w-4" />
-              Delete
+              DELETE
             </Button>
           </section>
         </div>

@@ -2,11 +2,10 @@ import { useAuth } from "@clerk/tanstack-react-start"
 import { useQuery } from "convex/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { useEffect, useState } from "react"
-import { Archive, LayoutGrid, List, Plus, Search } from "lucide-react"
 import { api } from "../../convex/_generated/api"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Skeleton } from "@/components/ui/skeleton"
+import { LoadingText } from "@/components/ui/skeleton"
 
 export const Route = createFileRoute("/library")({
   component: Library,
@@ -34,7 +33,7 @@ function Library() {
   if (!isLoaded || !isSignedIn) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-pulse bg-muted" />
+        <LoadingText />
       </div>
     )
   }
@@ -55,22 +54,38 @@ function Library() {
     <div className="mx-auto max-w-6xl px-6 py-12">
       <div className="mb-8 flex items-start justify-between">
         <div>
-          <h1 className="font-display text-3xl font-bold">Library</h1>
-          <p className="mt-1 text-muted-foreground">
-            {filteredWords?.length ?? 0} words in your collection
+          <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+            LIBRARY
+          </span>
+          <h1 className="mt-1 font-sans text-4xl font-medium text-[var(--text-display)]">
+            Your Words
+          </h1>
+          <p className="mt-1 text-[var(--text-secondary)]">
+            {(filteredWords?.length ?? 0).toLocaleString()} words in your collection
           </p>
         </div>
         <Button onClick={() => navigate({ to: "/add" })}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Word
+          + ADD WORD
         </Button>
       </div>
 
       <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative max-w-md flex-1">
-          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <svg
+            className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-[var(--text-disabled)]"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={1.5}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
           <Input
-            placeholder="Search your words..."
+            placeholder="SEARCH WORDS..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="pl-10"
@@ -78,75 +93,53 @@ function Library() {
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex border border-border">
+          <div className="segmented-control">
             <button
               onClick={() => setFilter("all")}
-              className={`px-3 py-1.5 text-sm transition-colors ${
-                filter === "all"
-                  ? "bg-primary text-primary-foreground"
-                  : "hover:bg-secondary"
-              }`}
+              className={`segment ${filter === "all" ? "segment-active" : ""}`}
             >
-              All
+              ALL
             </button>
             <button
               onClick={() => setFilter("due")}
-              className={`border-x border-border px-3 py-1.5 text-sm transition-colors ${
-                filter === "due"
-                  ? "bg-primary text-primary-foreground"
-                  : "hover:bg-secondary"
-              }`}
+              className={`segment ${filter === "due" ? "segment-active" : ""}`}
             >
-              Due
+              DUE
             </button>
             <button
               onClick={() => setFilter("archived")}
-              className={`flex items-center gap-1 px-3 py-1.5 text-sm transition-colors ${
-                filter === "archived"
-                  ? "bg-primary text-primary-foreground"
-                  : "hover:bg-secondary"
-              }`}
+              className={`segment ${filter === "archived" ? "segment-active" : ""}`}
             >
-              <Archive className="h-3 w-3" />
-              Archived
+              ARCHIVED
             </button>
           </div>
 
-          <div className="flex border border-border">
+          <div className="segmented-control">
             <button
               onClick={() => setView("list")}
-              className={`px-2 py-1.5 transition-colors ${
-                view === "list"
-                  ? "bg-primary text-primary-foreground"
-                  : "hover:bg-secondary"
-              }`}
+              className={`segment ${view === "list" ? "segment-active" : ""}`}
               title="List view"
             >
-              <List className="h-4 w-4" />
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </button>
             <button
               onClick={() => setView("grid")}
-              className={`border-l border-border px-2 py-1.5 transition-colors ${
-                view === "grid"
-                  ? "bg-primary text-primary-foreground"
-                  : "hover:bg-secondary"
-              }`}
+              className={`segment ${view === "grid" ? "segment-active" : ""}`}
               title="Grid view"
             >
-              <LayoutGrid className="h-4 w-4" />
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
             </button>
           </div>
         </div>
       </div>
 
       {isLoading ? (
-        <div className="space-y-4">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="border border-border bg-card p-4">
-              <Skeleton className="mb-2 h-5 w-32" />
-              <Skeleton className="h-4 w-full max-w-md" />
-            </div>
-          ))}
+        <div className="py-12 text-center">
+          <LoadingText>LOADING...</LoadingText>
         </div>
       ) : filteredWords && filteredWords.length > 0 ? (
         view === "list" ? (
@@ -161,11 +154,13 @@ function Library() {
           />
         )
       ) : (
-        <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="mb-4 flex h-16 w-16 items-center justify-center border border-border bg-secondary">
-            <Search className="h-6 w-6 text-muted-foreground" />
+        <div className="empty-state py-24">
+          <div className="empty-state-icon">
+            <svg className="h-6 w-6 text-[var(--text-disabled)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
           </div>
-          <h3 className="font-semibold">
+          <h3 className="empty-state-title">
             {search
               ? "No words found"
               : filter === "archived"
@@ -174,7 +169,7 @@ function Library() {
                   ? "No words due today"
                   : "Your library is empty"}
           </h3>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="empty-state-description">
             {search
               ? "Try a different search term"
               : filter === "all"
@@ -183,8 +178,7 @@ function Library() {
           </p>
           {filter === "all" && !search && (
             <Button className="mt-6" onClick={() => navigate({ to: "/add" })}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Your First Word
+              ADD YOUR FIRST WORD
             </Button>
           )}
         </div>
@@ -206,30 +200,30 @@ function ListView({
   onSelect: (id: string) => void
 }) {
   return (
-    <div className="divide-y divide-border border border-border bg-card">
+    <div className="divide-y divide-[var(--border)] border border-[var(--border)] bg-[var(--surface)]">
       {words.map((word) => (
         <button
           key={word._id}
           onClick={() => onSelect(word._id)}
-          className="flex w-full items-center justify-between px-6 py-4 text-left transition-colors hover:bg-secondary/50"
+          className="flex w-full items-center justify-between px-6 py-4 text-left transition-colors hover:bg-[var(--surface-raised)]"
         >
           <div className="min-w-0 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="font-display font-medium capitalize">
+            <div className="flex items-center gap-3">
+              <span className="font-mono font-medium capitalize text-[var(--text-display)]">
                 {word.word}
               </span>
               {word.part_of_speech && (
-                <span className="border border-border bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground">
+                <span className="tag">
                   {word.part_of_speech}
                 </span>
               )}
             </div>
-            <p className="mt-1 truncate text-sm text-muted-foreground">
+            <p className="mt-1 truncate text-sm text-[var(--text-secondary)]">
               {word.definition}
             </p>
           </div>
           <svg
-            className="h-4 w-4 flex-shrink-0 text-muted-foreground"
+            className="h-4 w-4 flex-shrink-0 text-[var(--text-disabled)]"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -237,7 +231,7 @@ function ListView({
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
+              strokeWidth={1.5}
               d="M9 5l7 7-7 7"
             />
           </svg>
@@ -265,19 +259,19 @@ function GridView({
         <button
           key={word._id}
           onClick={() => onSelect(word._id)}
-          className="border border-border bg-card p-5 text-left transition-colors hover:bg-secondary/50"
+          className="border border-[var(--border)] bg-[var(--surface)] p-5 text-left transition-colors hover:bg-[var(--surface-raised)]"
         >
-          <div className="mb-2 flex items-center gap-2">
-            <span className="font-display font-medium capitalize">
+          <div className="mb-2 flex items-center gap-3">
+            <span className="font-mono font-medium capitalize text-[var(--text-display)]">
               {word.word}
             </span>
             {word.part_of_speech && (
-              <span className="border border-border bg-secondary px-1.5 py-0.5 text-xs text-muted-foreground">
+              <span className="tag">
                 {word.part_of_speech}
               </span>
             )}
           </div>
-          <p className="line-clamp-2 text-sm text-muted-foreground">
+          <p className="line-clamp-2 text-sm text-[var(--text-secondary)]">
             {word.definition}
           </p>
         </button>

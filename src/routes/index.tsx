@@ -1,4 +1,9 @@
-import { useAuth, useUser } from "@clerk/tanstack-react-start"
+import {
+  SignInButton,
+  SignUpButton,
+  useAuth,
+  useUser,
+} from "@clerk/tanstack-react-start"
 import { useQuery } from "convex/react"
 import { Link, createFileRoute } from "@tanstack/react-router"
 import { api } from "../../convex/_generated/api"
@@ -30,34 +35,36 @@ function Home() {
 function LandingPage() {
   return (
     <div className="relative overflow-hidden">
-      <div className="absolute inset-0 -z-10 dot-grid-subtle opacity-20" />
+      <div className="dot-grid-subtle absolute inset-0 -z-10 opacity-20" />
 
       <div className="mx-auto max-w-6xl px-6 py-24">
         <div className="mx-auto max-w-3xl text-center">
           <div className="mb-8 inline-flex items-center gap-2 border border-[var(--border-visible)] px-3 py-1.5">
-            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+            <span className="font-mono text-[11px] tracking-[0.08em] text-[var(--text-secondary)] uppercase">
               AI-POWERED VOCABULARY BUILDING
             </span>
           </div>
 
-          <h1 className="font-sans text-5xl font-medium leading-tight tracking-tight text-[var(--text-display)] md:text-6xl lg:text-7xl">
+          <h1 className="font-sans text-5xl leading-tight font-medium tracking-tight text-[var(--text-display)] md:text-6xl lg:text-7xl">
             Build a vocabulary that
             <br />
             <span className="text-[var(--text-primary)]">actually sticks</span>
           </h1>
 
           <p className="mt-8 text-lg leading-relaxed text-[var(--text-secondary)]">
-            LexiKing combines AI-powered word enrichment with spaced repetition to
-            help you learn and retain new words effortlessly.
+            LexiKing combines AI-powered word enrichment with spaced repetition
+            to help you learn and retain new words effortlessly.
           </p>
 
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Button size="lg">
-              START LEARNING FREE
-            </Button>
-            <Button variant="secondary" size="lg">
-              SEE HOW IT WORKS
-            </Button>
+            <SignUpButton mode="modal">
+              <Button size="lg">START LEARNING FREE</Button>
+            </SignUpButton>
+            <SignInButton mode="modal">
+              <Button variant="secondary" size="lg">
+                SIGN IN
+              </Button>
+            </SignInButton>
           </div>
         </div>
 
@@ -81,14 +88,14 @@ function LandingPage() {
 
         <div className="mt-32">
           <div className="mb-8">
-            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+            <span className="font-mono text-[11px] tracking-[0.08em] text-[var(--text-secondary)] uppercase">
               YOUR LIBRARY
             </span>
           </div>
 
           <div className="border border-[var(--border)] bg-[var(--surface)]">
             <div className="border-b border-[var(--border)] px-6 py-3">
-              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+              <span className="font-mono text-[11px] tracking-[0.08em] text-[var(--text-secondary)] uppercase">
                 PREVIEW
               </span>
             </div>
@@ -160,11 +167,6 @@ function LandingPage() {
           <p className="mx-auto mt-4 max-w-xl text-[var(--text-secondary)]">
             Join thousands of learners building their personal dictionaries.
           </p>
-          <div className="mt-8">
-            <Button size="lg">
-              GET STARTED — FREE
-            </Button>
-          </div>
         </div>
       </div>
     </div>
@@ -182,7 +184,7 @@ function FeatureCard({
 }) {
   return (
     <div className="border border-[var(--border)] bg-[var(--surface)] p-6">
-      <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+      <span className="font-mono text-[11px] tracking-[0.08em] text-[var(--text-secondary)] uppercase">
         {label}
       </span>
       <h3 className="mt-4 font-sans text-lg font-medium text-[var(--text-primary)]">
@@ -208,12 +210,10 @@ function WordPreview({
     <div className="flex items-center justify-between px-6 py-4 text-left transition-colors hover:bg-[var(--surface-raised)]">
       <div className="flex-1">
         <div className="flex items-center gap-3">
-          <span className="font-mono text-lg font-medium capitalize text-[var(--text-display)]">
+          <span className="font-mono text-lg font-medium text-[var(--text-display)] capitalize">
             {word}
           </span>
-          <span className="tag">
-            {partOfSpeech}
-          </span>
+          <span className="tag">{partOfSpeech}</span>
         </div>
         <p className="mt-1 line-clamp-1 text-sm text-[var(--text-secondary)]">
           {definition}
@@ -249,7 +249,7 @@ function Dashboard() {
   return (
     <div className="mx-auto max-w-6xl px-6 py-12">
       <div className="mb-12">
-        <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+        <span className="font-mono text-[11px] tracking-[0.08em] text-[var(--text-secondary)] uppercase">
           DASHBOARD
         </span>
         <h1 className="mt-2 font-sans text-4xl font-medium text-[var(--text-display)]">
@@ -259,7 +259,9 @@ function Dashboard() {
           {dueCount > 0 ? (
             <>
               You have{" "}
-              <span className="font-mono font-bold text-[var(--text-display)]">{dueCount}</span>{" "}
+              <span className="font-mono font-bold text-[var(--text-display)]">
+                {dueCount}
+              </span>{" "}
               {dueCount === 1 ? "word" : "words"} due for review today.
             </>
           ) : totalCount === 0 ? (
@@ -274,7 +276,7 @@ function Dashboard() {
         <div className="mb-12 border border-[var(--accent)] bg-[var(--accent-subtle)] p-6">
           <div className="flex items-center justify-between">
             <div>
-              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--accent)]">
+              <span className="font-mono text-[11px] tracking-[0.08em] text-[var(--accent)] uppercase">
                 READY FOR REVIEW
               </span>
               <p className="mt-1 text-sm text-[var(--text-secondary)]">
@@ -282,23 +284,15 @@ function Dashboard() {
               </p>
             </div>
             <Link to="/quiz">
-              <Button>
-                START QUIZ
-              </Button>
+              <Button>START QUIZ</Button>
             </Link>
           </div>
         </div>
       )}
 
       <div className="grid gap-6 md:grid-cols-3">
-        <StatCard
-          label="WORDS DUE TODAY"
-          value={dueCount}
-        />
-        <StatCard
-          label="TOTAL WORDS"
-          value={totalCount}
-        />
+        <StatCard label="WORDS DUE TODAY" value={dueCount} />
+        <StatCard label="TOTAL WORDS" value={totalCount} />
         <StatCard
           label="RETENTION RATE"
           value={`${Math.round(retentionRate * 100)}%`}
@@ -306,23 +300,32 @@ function Dashboard() {
       </div>
 
       {totalCount === 0 && (
-        <div className="mt-12 text-center py-24">
+        <div className="mt-12 py-24 text-center">
           <div className="border border-[var(--border-visible)] px-8 py-12">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center border border-[var(--border-visible)] bg-[var(--surface)] mx-auto">
-              <svg className="h-6 w-6 text-[var(--text-disabled)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border border-[var(--border-visible)] bg-[var(--surface)]">
+              <svg
+                className="h-6 w-6 text-[var(--text-disabled)]"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                />
               </svg>
             </div>
             <h3 className="font-sans text-lg font-medium text-[var(--text-secondary)]">
               Add your first word
             </h3>
             <p className="mt-2 text-sm text-[var(--text-disabled)]">
-              Start building your personal dictionary with AI-powered enrichment.
+              Start building your personal dictionary with AI-powered
+              enrichment.
             </p>
             <Link to="/add">
-              <Button className="mt-6">
-                ADD WORD
-              </Button>
+              <Button className="mt-6">ADD WORD</Button>
             </Link>
           </div>
         </div>
@@ -331,7 +334,7 @@ function Dashboard() {
       {allWords && allWords.length > 0 && (
         <div className="mt-12">
           <div className="mb-6 flex items-center justify-between">
-            <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+            <span className="font-mono text-[11px] tracking-[0.08em] text-[var(--text-secondary)] uppercase">
               RECENT WORDS
             </span>
             <Link to="/library">
@@ -343,21 +346,15 @@ function Dashboard() {
 
           <div className="divide-y divide-[var(--border)] border border-[var(--border)] bg-[var(--surface)]">
             {allWords.slice(0, 5).map((word) => (
-              <Link
-                key={word._id}
-                to="/word/$id"
-                params={{ id: word._id }}
-              >
+              <Link key={word._id} to="/word/$id" params={{ id: word._id }}>
                 <div className="flex items-center justify-between px-6 py-4 transition-colors hover:bg-[var(--surface-raised)]">
                   <div className="flex-1">
                     <div className="flex items-center gap-3">
-                      <span className="font-mono font-medium capitalize text-[var(--text-display)]">
+                      <span className="font-mono font-medium text-[var(--text-display)] capitalize">
                         {word.word}
                       </span>
                       {word.part_of_speech && (
-                        <span className="tag">
-                          {word.part_of_speech}
-                        </span>
+                        <span className="tag">{word.part_of_speech}</span>
                       )}
                     </div>
                     <p className="mt-1 line-clamp-1 text-sm text-[var(--text-secondary)]">
@@ -387,16 +384,10 @@ function Dashboard() {
   )
 }
 
-function StatCard({
-  label,
-  value,
-}: {
-  label: string
-  value: string | number
-}) {
+function StatCard({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="border border-[var(--border)] bg-[var(--surface)] p-6">
-      <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+      <span className="font-mono text-[11px] tracking-[0.08em] text-[var(--text-secondary)] uppercase">
         {label}
       </span>
       <p className="mt-2 font-mono text-3xl font-bold text-[var(--text-display)]">
